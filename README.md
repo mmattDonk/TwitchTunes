@@ -1,4 +1,5 @@
 # ⚠ Known Issue: The Spotify OAuth token only lasts 1 hour, I am working on this issue and will fix ASAP (https://github.com/mmattbtw/TwitchTunes/issues/7)
+##### This issue is currently being funded on Issuehunt https://issuehunt.io/r/mmattbtw/TwitchTunes/issues/7
 ## `🎶` TwitchTunes
 #### A Python Twitch bot that lets viewers add Spotify songs to your Spotify queue. 
 
