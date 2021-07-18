@@ -1,5 +1,8 @@
-## python twitch song request spotify bot
+## TwitchTunes
+#### A Python Twitch bot that lets viewers add Spotify songs to your Spotify queue. 
 
+
+### Setup
 1. duplicate `config_example.json`
     1. change name to `config.json`
     2. fill out the values
@@ -11,5 +14,5 @@
     2. fill out the values
 5. run `tajjbot.py`
 
-## how to use it
+### How to request songs
 1. !sr {song name}
