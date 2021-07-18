@@ -58,24 +58,38 @@ class Bot(commands.Bot):
 
         else:
             if song_uri == "not found":
-                GET_SONG_URL = f"https://api.spotify.com/v1/search?q={song}&type=track&market=US"
-                async with request("GET", GET_SONG_URL, headers={"Content-Type": "application/json" , "Authorization": f"Bearer {self.token}"}) as resp:
+                GET_SONG_URL = (
+                    f"https://api.spotify.com/v1/search?q={song}&type=track&market=US"
+                )
+                async with request(
+                    "GET",
+                    GET_SONG_URL,
+                    headers={
+                        "Content-Type": "application/json",
+                        "Authorization": f"Bearer {self.token}",
+                    },
+                ) as resp:
                     data = await resp.json()
                     if resp.status == 200:
-                        song_uri = data['tracks']['items'][0]['uri']
-                        
+                        song_uri = data["tracks"]["items"][0]["uri"]
+
                     else:
                         await ctx.send("Couldn't find that song :/")
 
             if song_uri != "not found":
                 QUEUE_URL = f"https://api.spotify.com/v1/me/player/queue?uri={song_uri}"
-                async with request("POST", QUEUE_URL, headers={"Content-Type": "application/json" , "Authorization": f"Bearer {self.token}"}) as resp:
+                async with request(
+                    "POST",
+                    QUEUE_URL,
+                    headers={
+                        "Content-Type": "application/json",
+                        "Authorization": f"Bearer {self.token}",
+                    },
+                ) as resp:
                     if resp.status == 204:
                         await ctx.send(f"@{ctx.author.name}, your song has been added!")
                     else:
                         await ctx.send(f"Error: {resp.status}")
-
-        
 
 
 bot = Bot()
