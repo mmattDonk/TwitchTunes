@@ -8,6 +8,9 @@ import os
 import dotenv
 
 import json
+import re
+
+URL_REGEX = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
 
 with open("config.json") as config_file:
     config = json.load(config_file)
@@ -42,14 +45,31 @@ class Bot(commands.Bot):
         await ctx.send(f"FeelsDankMan 🔔 ding @{ctx.author.name} sr bot online")
 
     @commands.command(name="songrequest", aliases=["sr", "addsong"])
-    async def songrequest_command(self, ctx, *, song_uri: str):
-        QUEUE_URL = f"https://api.spotify.com/v1/me/player/queue?uri={song_uri}"
+    async def songrequest_command(self, ctx, *, song_name: str):
+        GET_SONG_URL = f"https://api.spotify.com/v1/search?q={song_name}&type=track&market=US"
 
-        async with request("POST", QUEUE_URL, headers={"Content-Type": "application/json" , "Authorization": f"Bearer {os.environ.get('SPOTIFY_AUTH')}"}) as resp:
-            if resp.status == 204:
-                await ctx.send(f"@{ctx.author.name}, your song has been added!")
-            else:
-                await ctx.send(f"Error: {resp.status}")
+        if re.match(URL_REGEX, song_name):
+            await ctx.send("Please send a song name instead!")
+
+        else:
+            song_uri = "not found"
+            async with request("GET", GET_SONG_URL, headers={"Content-Type": "application/json" , "Authorization": f"Bearer {os.environ.get('SPOTIFY_AUTH')}"}) as resp:
+                data = await resp.json()
+                if resp.status == 200:
+                    song_uri = data['tracks']['items'][0]['uri']
+                    
+                else:
+                    print(data)
+                    await ctx.send("Couldn't find that song :/")
+
+            QUEUE_URL = f"https://api.spotify.com/v1/me/player/queue?uri={song_uri}"
+
+            if song_uri != "not found":
+                async with request("POST", QUEUE_URL, headers={"Content-Type": "application/json" , "Authorization": f"Bearer {os.environ.get('SPOTIFY_AUTH')}"}) as resp:
+                    if resp.status == 204:
+                        await ctx.send(f"@{ctx.author.name}, your song ({data['tracks']['items'][0]['name']}) has been added!")
+                    else:
+                        await ctx.send(f"Error: {resp.status}")
 
         
 

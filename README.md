@@ -12,7 +12,4 @@
 5. run `tajjbot.py`
 
 ## how to use it
-1. find a spotify "URI"
-    1. search for your song on spotify
-    2. hold control, right click the song, then click "Copy URI"
-    3. !sr <uri>
+1. !sr {song name}
