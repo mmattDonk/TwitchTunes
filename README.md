@@ -20,3 +20,5 @@
 
 ### `❗` How to request songs
 1. !sr {song name}
+    * You can also use a Spotify URI
+        * You can get a URI by searching a song on Spotify, then holding down the `Ctrl` key while right clicking on the song, and then selecting "Copy Spotify URI" from the Share menu.
