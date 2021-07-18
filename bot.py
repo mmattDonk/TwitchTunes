@@ -29,7 +29,7 @@ class Bot(commands.Bot):
         )
 
     async def event_ready(self):
-        print(f"Ready | {self.nick}")
+        print(f"TwitchTunes Ready, logged in as: {self.nick}")
 
     async def event_message(self, message):
         print(
