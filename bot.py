@@ -29,7 +29,7 @@ class Bot(commands.Bot):
         )
 
         self.token = os.environ.get("SPOTIFY_AUTH")
-        self.version = "1.1"
+        self.version = "1.0.1"
 
     async def event_ready(self):
         print(f"TwitchTunes ({self.version}) Ready, logged in as: {self.nick}")
@@ -77,6 +77,20 @@ class Bot(commands.Bot):
                     else:
                         await ctx.send("Couldn't find that song :/")
 
+            song_id = song_uri.replace('spotify:track:', '')
+            GET_TRACK_INFO_URL = f"https://api.spotify.com/v1/tracks/{song_id}?market=US"
+
+            async with request("GET", GET_TRACK_INFO_URL, headers={
+                                "Content-Type": "application/json",
+                                "Authorization": f"Bearer {self.token}",
+                            }) as resp:
+                if resp.status == 200:
+                    data = await resp.json()
+                    song_name = data["name"]
+                    print(song_name)
+                    song_artists = data["artists"]
+                    song_artists_names = [artist["name"] for artist in song_artists]
+
             if song_uri != "not found":
                 QUEUE_URL = f"https://api.spotify.com/v1/me/player/queue?uri={song_uri}"
                 async with request(
@@ -88,7 +102,7 @@ class Bot(commands.Bot):
                     },
                 ) as resp:
                     if resp.status == 204:
-                        await ctx.send(f"@{ctx.author.name}, your song has been added!")
+                        await ctx.send(f"@{ctx.author.name}, your song ({song_name} by {', '.join(song_artists_names)}) has been added!")
                     else:
                         await ctx.send(f"Error: {resp.status}")
 
