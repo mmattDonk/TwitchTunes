@@ -1,5 +1,5 @@
 {
-    "nickname" : "tajjbot",
+    "nickname" : "botname",
     "prefix" : "!",
-    "channels" : ["tajj"]
+    "channels" : ["channelname"]
 }
