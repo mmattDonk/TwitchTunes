@@ -1,4 +1,4 @@
-## tajjbot sr
+## python twitch song request spotify bot
 
 1. duplicate `config_example.json`
     1. change name to `config.json`
