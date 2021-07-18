@@ -93,7 +93,6 @@ class Bot(commands.Bot):
                 if resp.status == 200:
                     data = await resp.json()
                     song_name = data["name"]
-                    print(song_name)
                     song_artists = data["artists"]
                     song_artists_names = [artist["name"] for artist in song_artists]
 
