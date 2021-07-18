@@ -12,7 +12,7 @@
 4. duplicate `.env.example` file
     1. copy `.env.example` to `.env`
     2. fill out the values
-5. run `tajjbot.py`
+5. run `bot.py`
 
 ### How to request songs
 1. !sr {song name}
