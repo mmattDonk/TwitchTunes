@@ -77,13 +77,19 @@ class Bot(commands.Bot):
                     else:
                         await ctx.send("Couldn't find that song :/")
 
-            song_id = song_uri.replace('spotify:track:', '')
-            GET_TRACK_INFO_URL = f"https://api.spotify.com/v1/tracks/{song_id}?market=US"
+            song_id = song_uri.replace("spotify:track:", "")
+            GET_TRACK_INFO_URL = (
+                f"https://api.spotify.com/v1/tracks/{song_id}?market=US"
+            )
 
-            async with request("GET", GET_TRACK_INFO_URL, headers={
-                                "Content-Type": "application/json",
-                                "Authorization": f"Bearer {self.token}",
-                            }) as resp:
+            async with request(
+                "GET",
+                GET_TRACK_INFO_URL,
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {self.token}",
+                },
+            ) as resp:
                 if resp.status == 200:
                     data = await resp.json()
                     song_name = data["name"]
@@ -102,7 +108,9 @@ class Bot(commands.Bot):
                     },
                 ) as resp:
                     if resp.status == 204:
-                        await ctx.send(f"@{ctx.author.name}, your song ({song_name} by {', '.join(song_artists_names)}) has been added!")
+                        await ctx.send(
+                            f"@{ctx.author.name}, your song ({song_name} by {', '.join(song_artists_names)}) has been added!"
+                        )
                     else:
                         await ctx.send(f"Error: {resp.status}")
 
