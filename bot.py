@@ -1,7 +1,6 @@
 import os
 
-os.system("pip install -U -r requirements.txt") 
-os.system("clear")
+os.system("pip install -U -r requirements.txt")
 
 from aiohttp import request
 
