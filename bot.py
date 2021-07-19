@@ -47,7 +47,9 @@ class Bot(commands.Bot):
 
     async def event_ready(self):
         print(f"TwitchTunes ({self.version}) Ready, logged in as: {self.nick}")
-        print("Ignore the 'AttributeError: 'NoneType' object has no attribute '_ws'' error, this is an issue with the library.")
+        print(
+            "Ignore the 'AttributeError: 'NoneType' object has no attribute '_ws'' error, this is an issue with the library."
+        )
 
     async def event_message(self, message):
         await self.handle_commands(message)
