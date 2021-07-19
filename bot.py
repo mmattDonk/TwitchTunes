@@ -91,10 +91,10 @@ class Bot(commands.Bot):
         else:
             await self.song_request(ctx, song, song_uri, album=False)
 
-    @commands.command(name="skip")
-    async def skip_song_command(self, ctx):
-        sp.next_track()
-        await ctx.send(f":) 🎶 Skipping song...")
+    # @commands.command(name="skip")
+    # async def skip_song_command(self, ctx):
+    #     sp.next_track()
+    #     await ctx.send(f":) 🎶 Skipping song...")
 
     # async def album_request(self, ctx, song):
     #     song = song.replace("spotify:album:", "")
