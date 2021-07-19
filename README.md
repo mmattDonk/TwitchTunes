@@ -2,20 +2,27 @@
 #### A Python Twitch bot that lets viewers add Spotify songs to your Spotify queue. 
 
 
+## `💻` Prerequisites
+1. Python
+    - [Windows](https://www.python.org/downloads/)
+        * Choco: `choco install python`
+    - [Mac](https://www.python.org/downloads/)
+        * Brew: `brew install python3` and `brew install pip3`
+    - [Ubuntu Guide](https://linuxize.com/post/how-to-install-python-3-9-on-ubuntu-20-04/)
+2. A Twitch bot account
+3. A Spotify account (I think Premium is required, not sure.)
+
+### `✨` Usefull things to have before running `setup.py`
+1. [Bot Token](https://twitchapps.com/tmi/)
+2. [Twitch Application](https://dev.twitch.tv/console/apps/create)
+    * Create a `Chat Bot` application
+    * the OAuth redirect URL can just be 'http://localhost'
+3. [Spotify Application](https://developer.spotify.com/dashboard/applications)
+    * Set the Website and Redirect URLs to `http://localhost:8080`
+
 ### `⚙` Setup
-1. Duplicate `config_example.json`
-    1. change name to `config.json`
-    2. fill out the values
-2. Install Python
-    * Windows: python.org/downloads
-    * MacOS: python.org/downloads
-        * Brew: `brew install python3` & `brew install pip3`
-4. Install Python dependencies
-    1. just run `pip install -r requirements.txt` in your console in this folder.
-5. Duplicate `.env.example` file
-    1. copy `.env.example` to `.env`
-    2. fill out the values
-6. Run `bot.py`
+1. Run the `setup.py` script.
+2. Follow all the instructions!
 
 ### `❗` How to request songs
 1. !sr {song name}

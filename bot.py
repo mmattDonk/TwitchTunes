@@ -10,6 +10,7 @@ from twitchio.ext import pubsub
 import dotenv
 
 import json
+
 import re
 
 import spotipy
@@ -26,8 +27,8 @@ sp = spotipy.Spotify(
     auth_manager=SpotifyOAuth(
         client_id=os.environ.get("spotify_client_id"),
         client_secret=os.environ.get("spotify_secret"),
-        redirect_uri=os.environ.get("spotify_redirect_uri"),
-        scope="user-modify-playback-state",
+        redirect_uri="http://localhost:8080",
+        scope=["user-modify-playback-state", "user-read-currently-playing", "user-read-playback-state"],
     )
 )
 
@@ -43,9 +44,10 @@ class Bot(commands.Bot):
         )
 
         self.token = os.environ.get("SPOTIFY_AUTH")
-        self.version = "1.2.1"
+        self.version = "1.2.2"
 
     async def event_ready(self):
+        print("\n" * 100) 
         print(f"TwitchTunes ({self.version}) Ready, logged in as: {self.nick}")
         print(
             "Ignore the 'AttributeError: 'NoneType' object has no attribute '_ws'' error, this is an issue with the library."
@@ -57,6 +59,22 @@ class Bot(commands.Bot):
     @commands.command(name="ping", aliases=["ding"])
     async def ping_command(self, ctx):
         await ctx.send(f":) 🎶 TwitchTunes (Spotify Song Requests) is online!")
+
+    @commands.command(name="np", aliases=["nowplaying", "song"])
+    async def np_command(self, ctx):
+        data = sp.currently_playing()
+        song_artists = data['item']["artists"]
+        song_artists_names = [artist['name'] for artist in song_artists]
+
+        min_through = int(data["progress_ms"]/(1000*60)%60)
+        sec_through = int(data["progress_ms"]/(1000)%60)
+        time_through = f"{min_through} mins, {sec_through} secs"
+
+        min_total = int(data["item"]["duration_ms"]/(1000*60)%60)
+        sec_total = int(data["item"]["duration_ms"]/(1000)%60)
+        time_total = f"{min_total} mins, {sec_total} secs"
+
+        await ctx.send(f"🎶Now Playing - {data['item']['name']} by {', '.join(song_artists_names)} | Link: {data['item']['external_urls']['spotify']} | {time_through} - {time_total}")
 
     @commands.command(name="songrequest", aliases=["sr", "addsong"])
     async def songrequest_command(self, ctx, *, song: str):
@@ -72,6 +90,11 @@ class Bot(commands.Bot):
 
         else:
             await self.song_request(ctx, song, song_uri, album=False)
+
+    @commands.command(name="skip")
+    async def skip_song_command(self, ctx):
+        sp.next_track()
+        await ctx.send(f":) 🎶 Skipping song...")
 
     # async def album_request(self, ctx, song):
     #     song = song.replace("spotify:album:", "")
