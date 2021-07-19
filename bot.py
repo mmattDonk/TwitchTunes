@@ -28,7 +28,11 @@ sp = spotipy.Spotify(
         client_id=os.environ.get("spotify_client_id"),
         client_secret=os.environ.get("spotify_secret"),
         redirect_uri="http://localhost:8080",
-        scope=["user-modify-playback-state", "user-read-currently-playing", "user-read-playback-state"],
+        scope=[
+            "user-modify-playback-state",
+            "user-read-currently-playing",
+            "user-read-playback-state",
+        ],
     )
 )
 
@@ -47,7 +51,7 @@ class Bot(commands.Bot):
         self.version = "1.2.3"
 
     async def event_ready(self):
-        print("\n" * 100) 
+        print("\n" * 100)
         print(f"TwitchTunes ({self.version}) Ready, logged in as: {self.nick}")
         print(
             "Ignore the 'AttributeError: 'NoneType' object has no attribute '_ws'' error, this is an issue with the library."
@@ -63,18 +67,20 @@ class Bot(commands.Bot):
     @commands.command(name="np", aliases=["nowplaying", "song"])
     async def np_command(self, ctx):
         data = sp.currently_playing()
-        song_artists = data['item']["artists"]
-        song_artists_names = [artist['name'] for artist in song_artists]
+        song_artists = data["item"]["artists"]
+        song_artists_names = [artist["name"] for artist in song_artists]
 
-        min_through = int(data["progress_ms"]/(1000*60)%60)
-        sec_through = int(data["progress_ms"]/(1000)%60)
+        min_through = int(data["progress_ms"] / (1000 * 60) % 60)
+        sec_through = int(data["progress_ms"] / (1000) % 60)
         time_through = f"{min_through} mins, {sec_through} secs"
 
-        min_total = int(data["item"]["duration_ms"]/(1000*60)%60)
-        sec_total = int(data["item"]["duration_ms"]/(1000)%60)
+        min_total = int(data["item"]["duration_ms"] / (1000 * 60) % 60)
+        sec_total = int(data["item"]["duration_ms"] / (1000) % 60)
         time_total = f"{min_total} mins, {sec_total} secs"
 
-        await ctx.send(f"🎶Now Playing - {data['item']['name']} by {', '.join(song_artists_names)} | Link: {data['item']['external_urls']['spotify']} | {time_through} - {time_total}")
+        await ctx.send(
+            f"🎶Now Playing - {data['item']['name']} by {', '.join(song_artists_names)} | Link: {data['item']['external_urls']['spotify']} | {time_through} - {time_total}"
+        )
 
     @commands.command(name="songrequest", aliases=["sr", "addsong"])
     async def songrequest_command(self, ctx, *, song: str):
