@@ -43,7 +43,7 @@ class Bot(commands.Bot):
         )
 
         self.token = os.environ.get("SPOTIFY_AUTH")
-        self.version = "1.2.0"
+        self.version = "1.2.1"
 
     async def event_ready(self):
         print(f"TwitchTunes ({self.version}) Ready, logged in as: {self.nick}")
