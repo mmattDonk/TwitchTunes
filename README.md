@@ -16,7 +16,7 @@
 1. [Bot Token](https://twitchapps.com/tmi/)
 2. [Twitch Application](https://dev.twitch.tv/console/apps/create)
     * Create a `Chat Bot` application
-    * the OAuth redirect URL can just be 'http://localhost'
+    * the OAuth redirect URL can just be `http://localhost`
 3. [Spotify Application](https://developer.spotify.com/dashboard/applications)
     * Set the Website and Redirect URLs to `http://localhost:8080`
 
