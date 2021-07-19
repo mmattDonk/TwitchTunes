@@ -133,7 +133,7 @@ class Bot(commands.Bot):
         if song_uri != "not found":
             sp.add_to_queue(song_uri)
             await ctx.author.send(
-                f"Your song ({song_name} by {', '.join(song_artists_names)}) has been added to {ctx.channel.name}'s queue!"
+                f"Your song ({song_name} by {', '.join(song_artists_names)}) [ {data['external_urls']['spotify']} ] has been added to {ctx.channel.name}'s queue!"
             )
 
 
