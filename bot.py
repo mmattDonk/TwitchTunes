@@ -65,20 +65,20 @@ class Bot(commands.Bot):
         else:
             await self.song_request(ctx, song, song_uri, album=False)
 
-    async def album_request(self, ctx, song):
-        song = song.replace("spotify:album:", "")
-        ALBUM_URL = f"https://api.spotify.com/v1/albums/{song}?market=US"
-        async with request("GET", ALBUM_URL, headers={
-                    "Content-Type": "application/json",
-                    "Authorization": "Bearer " + self.token,
-                }) as resp:
-                data = await resp.json()
-                songs_uris = [artist["uri"] for artist in data['tracks']['items']]
+    # async def album_request(self, ctx, song):
+    #     song = song.replace("spotify:album:", "")
+    #     ALBUM_URL = f"https://api.spotify.com/v1/albums/{song}?market=US"
+    #     async with request("GET", ALBUM_URL, headers={
+    #                 "Content-Type": "application/json",
+    #                 "Authorization": "Bearer " + self.token,
+    #             }) as resp:
+    #             data = await resp.json()
+    #             songs_uris = [artist["uri"] for artist in data['tracks']['items']]
 
-                for song_uris in songs_uris:
-                    await self.song_request(ctx, song, song_uris, album=True)
-                await ctx.send(f"Album Requested! {data['name']}")
-                return
+    #             for song_uris in songs_uris:
+    #                 await self.song_request(ctx, song, song_uris, album=True)
+    #             await ctx.send(f"Album Requested! {data['name']}")
+    #             return
 
     async def song_request(self, ctx, song, song_uri, album: bool):
         if song_uri is None:
