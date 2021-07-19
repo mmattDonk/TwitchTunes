@@ -48,6 +48,7 @@ class Bot(commands.Bot):
 
     async def event_ready(self):
         print(f"TwitchTunes ({self.version}) Ready, logged in as: {self.nick}")
+        print("Ignore the 'AttributeError: 'NoneType' object has no attribute '_ws'' error, this is an issue with the library.")
 
     async def event_message(self, message):
         await self.handle_commands(message)
@@ -100,7 +101,6 @@ class Bot(commands.Bot):
             song_artists_names = [artist["name"] for artist in song_artists]
 
         if song_uri != "not found":
-            print(song_uri)
             sp.add_to_queue(song_uri)
             await ctx.author.send(
                 f"Your song ({song_name} by {', '.join(song_artists_names)}) has been added to {ctx.channel.name}'s queue!"
