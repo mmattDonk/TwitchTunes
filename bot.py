@@ -22,10 +22,15 @@ with open("config.json") as config_file:
 
 dotenv.load_dotenv()
 
-sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=os.environ.get('spotify_client_id'),
-                                               client_secret=os.environ.get('spotify_secret'),
-                                               redirect_uri=os.environ.get('spotify_redirect_uri'),
-                                               scope="user-modify-playback-state"))
+sp = spotipy.Spotify(
+    auth_manager=SpotifyOAuth(
+        client_id=os.environ.get("spotify_client_id"),
+        client_secret=os.environ.get("spotify_secret"),
+        redirect_uri=os.environ.get("spotify_redirect_uri"),
+        scope="user-modify-playback-state",
+    )
+)
+
 
 class Bot(commands.Bot):
     def __init__(self):
@@ -82,12 +87,12 @@ class Bot(commands.Bot):
 
     async def song_request(self, ctx, song, song_uri, album: bool):
         if song_uri is None:
-            data = sp.search(song, limit=1, type='track', market='US')
+            data = sp.search(song, limit=1, type="track", market="US")
             song_uri = data["tracks"]["items"][0]["uri"]
 
         song_id = song_uri.replace("spotify:track:", "")
 
-        if not album:    
+        if not album:
             data = sp.track(song_id)
             song_name = data["name"]
             song_artists = data["artists"]
@@ -97,8 +102,9 @@ class Bot(commands.Bot):
             print(song_uri)
             sp.add_to_queue(song_uri)
             await ctx.author.send(
-                            f"Your song ({song_name} by {', '.join(song_artists_names)}) has been added to {ctx.channel.name}'s queue!"
-                        )
+                f"Your song ({song_name} by {', '.join(song_artists_names)}) has been added to {ctx.channel.name}'s queue!"
+            )
+
 
 bot = Bot()
 bot.run()
