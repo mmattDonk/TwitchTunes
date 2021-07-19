@@ -1,6 +1,7 @@
 import os
 
 os.system("pip install -U -r requirements.txt")
+os.system("pip install twitchio --pre --force-reinstall")
 
 from aiohttp import request
 
@@ -56,9 +57,6 @@ class Bot(commands.Bot):
         print(
             "Ignore the 'AttributeError: 'NoneType' object has no attribute '_ws'' error, this is an issue with the library."
         )
-
-    async def event_message(self, message):
-        await self.handle_commands(message)
 
     @commands.command(name="ping", aliases=["ding"])
     async def ping_command(self, ctx):

@@ -10,6 +10,7 @@ input(
     "Let's install the Python dependencies\n(This will also happen every time you open bot.py, to make sure they are up to date)\nPress `ENTER` to continue. "
 )
 os.system("pip install -U -r requirements.txt")
+os.system("pip install twitchio --pre --force-reinstall")
 
 print("\n⚠⚠⚠⚠⚠ WARNING: DO NOT SHOW THE FOLLOWING ON STREAM. ⚠⚠⚠⚠⚠" * 10)
 input("\nPress `ENTER` if this is not showing on stream.")
