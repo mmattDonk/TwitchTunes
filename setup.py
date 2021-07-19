@@ -10,6 +10,10 @@ input(
     "Let's install the Python dependencies\n(This will also happen every time you open bot.py, to make sure they are up to date)\nPress `ENTER` to continue. "
 )
 os.system("pip install -U -r requirements.txt")
+
+print("\n⚠⚠⚠⚠⚠ WARNING: DO NOT SHOW THE FOLLOWING ON STREAM. ⚠⚠⚠⚠⚠" * 10)
+input("\nPress `ENTER` if this is not showing on stream.")
+
 print("\n" * 100)
 print("Cool, now let's get to the boring stuff...")
 print("\n=-=-=-=-=-=-=-=-=-=")
