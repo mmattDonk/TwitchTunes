@@ -7,6 +7,6 @@ aiohttp == 3.7.4.post0
 python_dotenv == 0.18.0
 
 # C:\Users\notmm\TwitchTunes\bot.py: 3,4
-twitchio == 2.0.0
+twitchio == 2.0.2
 
 spotipy == 2.18.0
