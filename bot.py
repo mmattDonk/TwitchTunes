@@ -39,7 +39,6 @@ sp = spotipy.Spotify(
 )
 
 
-
 class Bot(commands.Bot):
     def __init__(self):
         super().__init__(
@@ -89,9 +88,7 @@ class Bot(commands.Bot):
     @commands.command(name="queue")
     async def queue_command(self, ctx):
         if self.queue:
-            await ctx.send(
-                f"🎶The queue contains: {', '.join(self.queue)}"
-            )
+            await ctx.send(f"🎶The queue contains: {', '.join(self.queue)}")
         else:
             await ctx.send(f"🎶The queue is empty!")
 
@@ -100,12 +97,11 @@ class Bot(commands.Bot):
         if ctx.author.is_mod:
             if self.queue != []:
                 self.queue.clear()
-                await ctx.send(f"🎶The queue has been cleared!")          
+                await ctx.send(f"🎶The queue has been cleared!")
             else:
                 await ctx.send(f"🎶The queue is already empty!")
         else:
             await ctx.send(f"🎶You don't have permission to do that!")
-    
 
     @commands.command(name="songrequest", aliases=["sr", "addsong"])
     async def songrequest_command(self, ctx, *, song: str):
@@ -156,15 +152,20 @@ class Bot(commands.Bot):
             song_artists_names = [artist["name"] for artist in song_artists]
 
         if song_uri != "not found":
-            #sp.add_to_queue(song_uri)
-            
-            self.queue.append(f"{song_name} by {', '.join(song_artists_names)} [{ctx.author.name}]")
-            self.queue_names.append({f"{ctx.author.name}" : f"{song_name} by {', '.join(song_artists_names)} [{ctx.author.name}]"})
+            # sp.add_to_queue(song_uri)
+
+            self.queue.append(
+                f"{song_name} by {', '.join(song_artists_names)} [{ctx.author.name}]"
+            )
+            self.queue_names.append(
+                {
+                    f"{ctx.author.name}": f"{song_name} by {', '.join(song_artists_names)} [{ctx.author.name}]"
+                }
+            )
 
             await ctx.author.send(
                 f"Your song ({song_name} by {', '.join(song_artists_names)}) [ {data['external_urls']['spotify']} ] has been added to {ctx.channel.name}'s queue!"
             )
-
 
     async def queue_up_song(self, ctx, song_uri, author_name, first_song):
         song_id = song_uri.replace("spotify:track:", "")
@@ -176,9 +177,14 @@ class Bot(commands.Bot):
 
         sp.add_to_queue(song_uri)
 
-        self.queue.remove(f"{song_name} by {', '.join(song_artists_names)} [{ctx.author.name}]")
-        self.queue_names.remove({f"{ctx.author.name}" : f"{song_name} by {', '.join(song_artists_names)} [{ctx.author.name}]"})
-
+        self.queue.remove(
+            f"{song_name} by {', '.join(song_artists_names)} [{ctx.author.name}]"
+        )
+        self.queue_names.remove(
+            {
+                f"{ctx.author.name}": f"{song_name} by {', '.join(song_artists_names)} [{ctx.author.name}]"
+            }
+        )
 
 
 bot = Bot()
