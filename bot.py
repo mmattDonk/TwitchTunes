@@ -1,6 +1,7 @@
 import os
 
 os.system("pip install -U -r requirements.txt")
+print("\n\nStarting 🎶TwitchTunes")
 
 from aiohttp import request
 
