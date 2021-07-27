@@ -185,7 +185,9 @@ class Bot(commands.Bot):
         song_artists = data["artists"]
         song_artists_names = [artist["name"] for artist in song_artists]
         seconds = self.np_song_length()
-        queue_str = f"{song_name} by {', '.join(song_artists_names)} [{ctx.author.name}]"
+        queue_str = (
+            f"{song_name} by {', '.join(song_artists_names)} [{ctx.author.name}]"
+        )
 
         if queue_str == self.queue[0]:
             print(self.queue[0])
@@ -202,7 +204,7 @@ class Bot(commands.Bot):
 
         # self.queue.remove(
         #     f"{song_name} by {', '.join(song_artists_names)} [{ctx.author.name}]"
-        # )   
+        # )
 
 
 bot = Bot()
