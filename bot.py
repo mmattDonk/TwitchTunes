@@ -1,6 +1,7 @@
 import os
 
 os.system("pip install -U -r requirements.txt")
+print("\n\nStarting 🎶TwitchTunes")
 
 from aiohttp import request
 
@@ -67,7 +68,9 @@ class Bot(commands.Bot):
 
     @commands.command(name="ping", aliases=["ding"])
     async def ping_command(self, ctx):
-        await ctx.send(f":) 🎶 TwitchTunes (Spotify Song Requests) is online!")
+        await ctx.send(
+            f":) 🎶 TwitchTunes v{self.version} (Spotify Song Requests) is online!"
+        )
 
     @commands.command(name="np", aliases=["nowplaying", "song"])
     async def np_command(self, ctx):
