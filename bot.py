@@ -15,6 +15,8 @@ import time
 
 import re
 
+from threading import Timer
+
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 
@@ -69,6 +71,9 @@ class Bot(commands.Bot):
 
     @commands.command(name="np", aliases=["nowplaying", "song"])
     async def np_command(self, ctx):
+        await self.np(ctx)
+
+    async def np(ctx):
         data = sp.currently_playing()
         song_artists = data["item"]["artists"]
         song_artists_names = [artist["name"] for artist in song_artists]
@@ -84,6 +89,15 @@ class Bot(commands.Bot):
         await ctx.send(
             f"🎶Now Playing - {data['item']['name']} by {', '.join(song_artists_names)} | Link: {data['item']['external_urls']['spotify']} | {time_through} - {time_total}"
         )
+
+    def np_song_length(self):
+        data = sp.currently_playing()
+        ms = data["item"]["duration_ms"]
+        ms_through = data["progress_ms"]
+
+        subtract = ms - ms_through
+
+        return subtract / 1000
 
     @commands.command(name="queue")
     async def queue_command(self, ctx):
@@ -153,38 +167,42 @@ class Bot(commands.Bot):
 
         if song_uri != "not found":
             # sp.add_to_queue(song_uri)
-
             self.queue.append(
                 f"{song_name} by {', '.join(song_artists_names)} [{ctx.author.name}]"
             )
-            self.queue_names.append(
-                {
-                    f"{ctx.author.name}": f"{song_name} by {', '.join(song_artists_names)} [{ctx.author.name}]"
-                }
-            )
 
-            await ctx.author.send(
+            await self.queue_up_song(ctx, song_uri)
+
+            await ctx.send(
                 f"Your song ({song_name} by {', '.join(song_artists_names)}) [ {data['external_urls']['spotify']} ] has been added to {ctx.channel.name}'s queue!"
             )
 
-    async def queue_up_song(self, ctx, song_uri, author_name, first_song):
+    async def queue_up_song(self, ctx, song_uri):
         song_id = song_uri.replace("spotify:track:", "")
 
         data = sp.track(song_id)
         song_name = data["name"]
         song_artists = data["artists"]
         song_artists_names = [artist["name"] for artist in song_artists]
+        seconds = self.np_song_length()
+        queue_str = f"{song_name} by {', '.join(song_artists_names)} [{ctx.author.name}]"
 
+        if queue_str == self.queue[0]:
+            print(self.queue[0])
+            print(queue_str)
+            sp.add_to_queue(song_uri)
+            sp.next_track()
+
+        else:
+            t = Timer(seconds, self.add_to_queue(song_uri))
+            t.start()
+
+    def add_to_queue(self, song_uri):
         sp.add_to_queue(song_uri)
 
-        self.queue.remove(
-            f"{song_name} by {', '.join(song_artists_names)} [{ctx.author.name}]"
-        )
-        self.queue_names.remove(
-            {
-                f"{ctx.author.name}": f"{song_name} by {', '.join(song_artists_names)} [{ctx.author.name}]"
-            }
-        )
+        # self.queue.remove(
+        #     f"{song_name} by {', '.join(song_artists_names)} [{ctx.author.name}]"
+        # )   
 
 
 bot = Bot()

@@ -2,3 +2,7 @@
 config.json
 venv
 .cache
+__pycache__
+build/
+dist/
+bot.spec
