@@ -88,8 +88,7 @@ class Bot(commands.Bot):
         )
 
     def is_owner(self, ctx):
-        return ctx.author.id == '640348450'
-
+        return ctx.author.id == "640348450"
 
     @commands.command(name="blacklist", aliases=["blacklistsong", "blacklistadd"])
     async def blacklist_command(self, ctx, *, song_uri: str):
