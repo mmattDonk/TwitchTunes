@@ -264,8 +264,6 @@ class Bot(commands.Bot):
 
         if song_uri != "not found":
             # sp.add_to_queue(song_uri)
-            
-
 
             if song_uri in jscon["blacklist"]:
                 await ctx.send("That song is blacklisted.")
@@ -274,9 +272,9 @@ class Bot(commands.Bot):
                 await ctx.send("Send a shorter song please! :)")
             else:
                 self.queue.append(
-                f"{song_name} by {', '.join(song_artists_names)} [{ctx.author.name}]"
+                    f"{song_name} by {', '.join(song_artists_names)} [{ctx.author.name}]"
                 )
-                #sp.add_to_queue(song_uri)
+                # sp.add_to_queue(song_uri)
                 await self.queue_up_song(ctx, song_uri)
                 await ctx.send(
                     f"Your song ({song_name} by {', '.join(song_artists_names)}) [ {data['external_urls']['spotify']} ] has been added to {ctx.channel.name}'s queue!"
