@@ -12,7 +12,7 @@ if not os.path.exists(config_path):
 
 if not os.path.exists(blacklist_path):
     print(
-        "Blacklist file not found. Exiting.\nPlease run `setup.py`\n(or make a `blacklist.json` file yourself, if you know how to)"
+        "Blacklist file not found. Exiting.\nPlease run `setup.py`\n(or make a `blacklist.json` file yourself, if you know how to)\nhttps://github.com/mmattbtw/TwitchTunes/wiki/Blacklist.json"
     )
     exit()
 
