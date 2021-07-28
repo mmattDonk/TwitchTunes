@@ -87,9 +87,13 @@ class Bot(commands.Bot):
             f":) 🎶 TwitchTunes v{self.version} (Spotify Song Requests) is online!"
         )
 
+    def is_owner(self, ctx):
+        return ctx.author.id == '640348450'
+
+
     @commands.command(name="blacklist", aliases=["blacklistsong", "blacklistadd"])
     async def blacklist_command(self, ctx, *, song_uri: str):
-        if ctx.author.is_mod or ctx.author.is_owner:
+        if ctx.author.is_mod or self.is_owner(ctx):
             jscon = self.read_json("blacklist")
 
             song_uri = song_uri.replace("spotify:track:", "")
@@ -120,7 +124,7 @@ class Bot(commands.Bot):
         name="unblacklist", aliases=["unblacklistsong", "blacklistremove"]
     )
     async def unblacklist_command(self, ctx, *, song_uri: str):
-        if ctx.author.is_mod or ctx.author.is_owner:
+        if ctx.author.is_mod or self.is_owner(ctx):
             jscon = self.read_json("blacklist")
 
             song_uri = song_uri.replace("spotify:track:", "")
@@ -179,8 +183,8 @@ class Bot(commands.Bot):
     #     await ctx.send(f":) 🎶 Skipping song...")
 
     # @commands.command(name="albumqueue")
+    #     if ctx.author.is_mod or ctx.author.is_subscriber or self.is_owner(ctx):
     # async def albumqueue_command(self, ctx, *, album: str):
-    #     if ctx.author.is_mod or ctx.author.is_subscriber or ctx.author.is_owner:
     #         album_uri = None
 
     #         if (
