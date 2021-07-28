@@ -3,15 +3,17 @@ from typing import Optional
 
 from twitchio.ext.commands.errors import MissingRequiredArgument
 
-config_path = os.path.join('.', "config.json")
-blacklist_path = os.path.join('.', "blacklist.json")
+config_path = os.path.join(".", "config.json")
+blacklist_path = os.path.join(".", "blacklist.json")
 
 if not os.path.exists(config_path):
     print("Config file not found. Exiting.\nPlease run `setup.py`")
     exit()
 
 if not os.path.exists(blacklist_path):
-    print("Blacklist file not found. Exiting.\nPlease run `setup.py`\n(or make a `blacklist.json` file yourself, if you know how to)")
+    print(
+        "Blacklist file not found. Exiting.\nPlease run `setup.py`\n(or make a `blacklist.json` file yourself, if you know how to)"
+    )
     exit()
 
 os.system("pip install -U -r requirements.txt")
@@ -108,14 +110,16 @@ class Bot(commands.Bot):
                 self.write_json(jscon, "blacklist")
 
                 await ctx.send(f"Added {track_name} to blacklist.")
-            
+
             else:
                 await ctx.send(f"Song is already blacklisted.")
 
         else:
             await ctx.send("You are not authorized to use this command.")
 
-    @commands.command(name="unblacklist", aliases=["unblacklistsong", "blacklistremove"])
+    @commands.command(
+        name="unblacklist", aliases=["unblacklistsong", "blacklistremove"]
+    )
     async def unblacklist_command(self, ctx, *, song_uri: str):
         if ctx.author.is_mod or ctx.author.is_owner:
             jscon = self.read_json("blacklist")
@@ -131,7 +135,6 @@ class Bot(commands.Bot):
                 await ctx.send(f"Song is not blacklisted.")
         else:
             await ctx.send("You are not authorized to use this command.")
-
 
     @commands.command(name="np", aliases=["nowplaying", "song"])
     async def np_command(self, ctx):
@@ -237,6 +240,7 @@ class Bot(commands.Bot):
     def write_json(self, data, filename):
         with open(f"{cwd}/{filename}.json", "w") as file:
             json.dump(data, file, indent=4)
+
 
 bot = Bot()
 bot.run()
