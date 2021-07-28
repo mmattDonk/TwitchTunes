@@ -127,7 +127,7 @@ class Bot(commands.Bot):
 
             if re.match(URL_REGEX, song_uri):
                 data = sp.track(song_uri)
-                song_uri = data['uri']
+                song_uri = data["uri"]
                 song_uri = song_uri.replace("spotify:track:", "")
 
             if song_uri in jscon["blacklist"]:
