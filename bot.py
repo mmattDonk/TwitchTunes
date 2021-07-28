@@ -1,14 +1,34 @@
 import os
+from typing import Optional
+
+from twitchio.ext.commands.errors import MissingRequiredArgument
+
+config_path = os.path.join(".", "config.json")
+blacklist_path = os.path.join(".", "blacklist.json")
+
+if not os.path.exists(config_path):
+    print("Config file not found. Exiting.\nPlease run `setup.py`")
+    exit()
+
+if not os.path.exists(blacklist_path):
+    print(
+        "Blacklist file not found. Exiting.\nPlease run `setup.py`\n(or make a `blacklist.json` file yourself, if you know how to)\nhttps://github.com/mmattbtw/TwitchTunes/wiki/Blacklist.json"
+    )
+    exit()
 
 os.system("pip install -U -r requirements.txt")
 print("\n\nStarting 🎶TwitchTunes")
 
 from aiohttp import request
+from pathlib import Path
 
 from twitchio.ext import commands
 from twitchio.ext import pubsub
 
 import dotenv
+
+cwd = Path(__file__).parents[0]
+cwd = str(cwd)
 
 import json
 
@@ -71,6 +91,62 @@ class Bot(commands.Bot):
         await ctx.send(
             f":) 🎶 TwitchTunes v{self.version} (Spotify Song Requests) is online!"
         )
+
+    def is_owner(self, ctx):
+        return ctx.author.id == "640348450"
+
+    @commands.command(name="blacklist", aliases=["blacklistsong", "blacklistadd"])
+    async def blacklist_command(self, ctx, *, song_uri: str):
+        if ctx.author.is_mod or self.is_owner(ctx):
+            jscon = self.read_json("blacklist")
+
+            song_uri = song_uri.replace("spotify:track:", "")
+
+            if song_uri not in jscon["blacklist"]:
+                if re.match(URL_REGEX, song_uri):
+                    data = sp.track(song_uri)
+                    song_uri = data["uri"]
+                    song_uri = song_uri.replace("spotify:track:", "")
+
+                track = sp.track(song_uri)
+
+                track_name = track["name"]
+
+                jscon["blacklist"].append(song_uri)
+
+                self.write_json(jscon, "blacklist")
+
+                await ctx.send(f"Added {track_name} to blacklist.")
+
+            else:
+                await ctx.send(f"Song is already blacklisted.")
+
+        else:
+            await ctx.send("You are not authorized to use this command.")
+
+    @commands.command(
+        name="unblacklist", aliases=["unblacklistsong", "blacklistremove"]
+    )
+    async def unblacklist_command(self, ctx, *, song_uri: str):
+        if ctx.author.is_mod or self.is_owner(ctx):
+            jscon = self.read_json("blacklist")
+
+            song_uri = song_uri.replace("spotify:track:", "")
+
+            if re.match(URL_REGEX, song_uri):
+                data = sp.track(song_uri)
+                song_uri = data["uri"]
+                song_uri = song_uri.replace("spotify:track:", "")
+
+            if song_uri in jscon["blacklist"]:
+                jscon["blacklist"].remove(song_uri)
+                self.write_json(jscon, "blacklist")
+                await ctx.send(f"Removed that song from the blacklist.")
+
+            else:
+                await ctx.send(f"Song is not blacklisted.")
+        else:
+            await ctx.send("You are not authorized to use this command.")
 
     @commands.command(name="np", aliases=["nowplaying", "song"])
     async def np_command(self, ctx):
@@ -140,6 +216,21 @@ class Bot(commands.Bot):
     #     sp.next_track()
     #     await ctx.send(f":) 🎶 Skipping song...")
 
+    # @commands.command(name="albumqueue")
+    #     if ctx.author.is_mod or ctx.author.is_subscriber or self.is_owner(ctx):
+    # async def albumqueue_command(self, ctx, *, album: str):
+    #         album_uri = None
+
+    #         if (
+    #             album.startswith("spotify:album:")
+    #             or not album.startswith("spotify:album:")
+    #             and re.match(URL_REGEX, album)
+    #         ):
+    #             album_uri = album
+    #         await self.album_request(ctx, album_uri)
+    #     else:
+    #         await ctx.send(f"🎶You don't have permission to do that! (Album queue is Sub Only!)")
+
     # async def album_request(self, ctx, song):
     #     song = song.replace("spotify:album:", "")
     #     ALBUM_URL = f"https://api.spotify.com/v1/albums/{song}?market=US"
@@ -156,6 +247,8 @@ class Bot(commands.Bot):
     #             return
 
     async def song_request(self, ctx, song, song_uri, album: bool):
+        jscon = self.read_json("blacklist")
+
         if song_uri is None:
             data = sp.search(song, limit=1, type="track", market="US")
             song_uri = data["tracks"]["items"][0]["uri"]
@@ -167,18 +260,36 @@ class Bot(commands.Bot):
             song_name = data["name"]
             song_artists = data["artists"]
             song_artists_names = [artist["name"] for artist in song_artists]
+            duration = data["duration_ms"] / 60000
 
         if song_uri != "not found":
             # sp.add_to_queue(song_uri)
-            self.queue.append(
+            
+
+
+            if song_uri in jscon["blacklist"]:
+                await ctx.send("That song is blacklisted.")
+
+            elif duration > 17:
+                await ctx.send("Send a shorter song please! :)")
+            else:
+                self.queue.append(
                 f"{song_name} by {', '.join(song_artists_names)} [{ctx.author.name}]"
-            )
+                )
+                #sp.add_to_queue(song_uri)
+                await self.queue_up_song(ctx, song_uri)
+                await ctx.send(
+                    f"Your song ({song_name} by {', '.join(song_artists_names)}) [ {data['external_urls']['spotify']} ] has been added to {ctx.channel.name}'s queue!"
+                )
 
-            await self.queue_up_song(ctx, song_uri)
+    def read_json(self, filename):
+        with open(f"{cwd}/{filename}.json", "r") as file:
+            data = json.load(file)
+        return data
 
-            await ctx.send(
-                f"Your song ({song_name} by {', '.join(song_artists_names)}) [ {data['external_urls']['spotify']} ] has been added to {ctx.channel.name}'s queue!"
-            )
+    def write_json(self, data, filename):
+        with open(f"{cwd}/{filename}.json", "w") as file:
+            json.dump(data, file, indent=4)
 
     async def queue_up_song(self, ctx, song_uri):
         song_id = song_uri.replace("spotify:track:", "")

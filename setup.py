@@ -76,6 +76,9 @@ with open("config.json", "a") as config_file:
         json.dumps({"nickname": bot_name, "prefix": prefix, "channels": [channel]})
     )
 
+with open("blacklist.json", "a") as blacklist_file:
+    blacklist_file.write(json.dumps({"blacklist": []}))
+
 input(
     "All done!, enjoy using your Song Request Bot!\nAll you have to do now, is run the `bot.py` file!"
 )
