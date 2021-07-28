@@ -2,3 +2,4 @@
 config.json
 venv
 .cache
+blacklist.json
