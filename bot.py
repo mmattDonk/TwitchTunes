@@ -67,7 +67,7 @@ class Bot(commands.Bot):
         )
 
         self.token = os.environ.get("SPOTIFY_AUTH")
-        self.version = "1.2.3.BLACKLIST"
+        self.version = "1.2.3.BLACKLIST (fix)"
 
     async def event_ready(self):
         print("\n" * 100)
@@ -94,10 +94,10 @@ class Bot(commands.Bot):
 
             if song_uri not in jscon["blacklist"]:
                 if re.match(URL_REGEX, song_uri):
-                    data = sp.search(song_uri, limit=1, type="track", market="US")
-                    print(data)
-                    song_uri = data["tracks"]["items"][0]["uri"]
+                    data = sp.track(song_uri)
+                    song_uri = data['uri']
                     song_uri = song_uri.replace("spotify:track:", "")
+
 
                 track = sp.track(song_uri)
 
@@ -219,15 +219,15 @@ class Bot(commands.Bot):
 
         if song_uri != "not found":
             if song_uri in jscon["blacklist"]:
-                if duration > 17:
-                    await ctx.send("Send a shorter song please! :)")
-                else:
-                    sp.add_to_queue(song_uri)
-                    await ctx.send(
-                        f"Your song ({song_name} by {', '.join(song_artists_names)}) [ {data['external_urls']['spotify']} ] has been added to {ctx.channel.name}'s queue!"
-                    )
-            else:
                 await ctx.send("That song is blacklisted.")
+
+            elif duration > 17:
+                await ctx.send("Send a shorter song please! :)")
+            else:
+                sp.add_to_queue(song_uri)
+                await ctx.send(
+                    f"Your song ({song_name} by {', '.join(song_artists_names)}) [ {data['external_urls']['spotify']} ] has been added to {ctx.channel.name}'s queue!"
+                )
 
     def read_json(self, filename):
         with open(f"{cwd}/{filename}.json", "r") as file:
