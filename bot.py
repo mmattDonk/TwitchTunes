@@ -279,7 +279,7 @@ class Bot(commands.Bot):
                 else:
                     sp.add_to_queue(song_uri)
                     await ctx.send(
-                        f"Your song ({song_name} by {', '.join(song_artists_names)}) [ {data['external_urls']['spotify']} ] has been added to {ctx.channel.name}'s queue!"
+                        f"@{ctx.author.name}, Your song ({song_name} by {', '.join(song_artists_names)}) [ {data['external_urls']['spotify']} ] has been added to the queue!"
                     )
 
     def read_json(self, filename):
