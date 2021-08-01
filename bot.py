@@ -90,7 +90,7 @@ class Bot(commands.Bot):
         print(
             "Ignore the 'AttributeError: 'NoneType' object has no attribute '_ws'' error, this is an issue with the library."
         )
-        
+
     def read_json(self, filename):
         with open(f"{filename}.json", "r") as file:
             data = json.load(file)
@@ -99,7 +99,7 @@ class Bot(commands.Bot):
     def write_json(self, data, filename):
         with open(f"{filename}.json", "w") as file:
             json.dump(data, file, indent=4)
-            
+
     async def event_message(self, message):
         await self.handle_commands(message)
 
@@ -295,7 +295,6 @@ class Bot(commands.Bot):
                     await ctx.send(
                         f"@{ctx.author.name}, Your song ({song_name} by {', '.join(song_artists_names)}) [ {data['external_urls']['spotify']} ] has been added to the queue!"
                     )
-
 
 
 bot = Bot()
