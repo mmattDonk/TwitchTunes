@@ -57,6 +57,7 @@ channel = input(
 print("\n--------------------------")
 print("\n" * 10)
 
+print("....Writing to `.env`")
 with open(".env", "a") as env_file:
     env_file.write(
         f"TOKEN={token}\n"
@@ -71,13 +72,31 @@ with open(".env", "a") as env_file:
         + "# Set your 'redirect_uri' and 'website' on your Spotify application to 'http://localhost:8080' (Don't change the spotify_redirect_uri in .env)"
     )
 
+print("Finished writing to `.env`")
+
+print("....Writing to `config.json`")
 with open("config.json", "a") as config_file:
     config_file.write(
         json.dumps({"nickname": bot_name, "prefix": prefix, "channels": [channel]})
     )
 
+print("Finished writing to `config.json`")
+
+print("....Writing to `blacklist.json`")
+
 with open("blacklist.json", "a") as blacklist_file:
     blacklist_file.write(json.dumps({"blacklist": []}))
+
+print("Finished writing to `blacklist.json`")
+
+print("....Writing to `blacklist_user.json`")
+
+with open("blacklist_user.json", "a") as blacklist_user_file:
+    blacklist_user_file.write(json.dumps({"users": []}))
+
+print("Finished writing to `blacklist_user.json`")
+
+print("\n" * 10)
 
 input(
     "All done!, enjoy using your Song Request Bot!\nAll you have to do now, is run the `bot.py` file!"

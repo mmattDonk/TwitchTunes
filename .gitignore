@@ -3,3 +3,4 @@ config.json
 venv
 .cache
 blacklist.json
+blacklist_user.json
