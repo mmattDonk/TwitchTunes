@@ -7,6 +7,7 @@ from twitchio.ext.commands.errors import MissingRequiredArgument
 def path_exists(filename):
     return os.path.join(".", f"{filename}")
 
+
 if not os.path.exists(path_exists("config.json")):
     print("Config file not found. Exiting.\nPlease run `setup.py`")
     exit()
@@ -122,7 +123,6 @@ class Bot(commands.Bot):
                 await ctx.send(f"{user} is not blacklisted")
         else:
             await ctx.send("You don't have permission to do that.")
-
 
     @commands.command(name="blacklist", aliases=["blacklistsong", "blacklistadd"])
     async def blacklist_command(self, ctx, *, song_uri: str):
