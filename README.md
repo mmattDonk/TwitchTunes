@@ -34,7 +34,7 @@
     
     * `{user}` - Twitch Username
 
-    * `{song}` - Can be a song name, a Spotify URI, or a Spotify URL
+    * `{song}` - Can be a song name, a Spotify URI, or a Spotify URL (for the blacklist commands, it can only be a URI or URL)
 
  - Commands:
 
