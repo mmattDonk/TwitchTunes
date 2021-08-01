@@ -3,16 +3,24 @@ from typing import Optional
 
 from twitchio.ext.commands.errors import MissingRequiredArgument
 
-config_path = os.path.join(".", "config.json")
-blacklist_path = os.path.join(".", "blacklist.json")
 
-if not os.path.exists(config_path):
+def path_exists(filename):
+    return os.path.join(".", f"{filename}")
+
+
+if not os.path.exists(path_exists("config.json")):
     print("Config file not found. Exiting.\nPlease run `setup.py`")
     exit()
 
-if not os.path.exists(blacklist_path):
+if not os.path.exists(path_exists("blacklist.json")):
     print(
         "Blacklist file not found. Exiting.\nPlease run `setup.py`\n(or make a `blacklist.json` file yourself, if you know how to)\nhttps://github.com/mmattbtw/TwitchTunes/wiki/Blacklist.json"
+    )
+    exit()
+
+if not os.path.exists(path_exists("blacklist_user.json")):
+    print(
+        "Blacklisted users file not found. Exiting.\nPlease run `setup.py`\n(or make a `blacklist_user.json` file yourself, if you know how to)\nhttps://github.com/mmattbtw/TwitchTunes/wiki/Blacklist.json"
     )
     exit()
 
@@ -69,7 +77,7 @@ class Bot(commands.Bot):
         )
 
         self.token = os.environ.get("SPOTIFY_AUTH")
-        self.version = "1.2.4"
+        self.version = "1.2.5"
 
     async def event_ready(self):
         print("\n" * 100)
@@ -89,6 +97,32 @@ class Bot(commands.Bot):
 
     def is_owner(self, ctx):
         return ctx.author.id == "640348450"
+
+    @commands.command(name="blacklistuser")
+    async def blacklist_user(self, ctx, *, user: str):
+        if ctx.author.is_mod or self.is_owner(ctx):
+            file = self.read_json("blacklist_user")
+            if user not in file["users"]:
+                file["users"].append(user)
+                self.write_json(file, "blacklist_user")
+                await ctx.send(f"{user} added to blacklist")
+            else:
+                await ctx.send(f"{user} is already blacklisted")
+        else:
+            await ctx.send("You don't have permission to do that.")
+
+    @commands.command(name="unblacklistuser")
+    async def unblacklist_user(self, ctx, *, user: str):
+        if ctx.author.is_mod or self.is_owner(ctx):
+            file = self.read_json("blacklist_user")
+            if user in file["users"]:
+                file["users"].remove(user)
+                self.write_json(file, "blacklist_user")
+                await ctx.send(f"{user} removed from blacklist")
+            else:
+                await ctx.send(f"{user} is not blacklisted")
+        else:
+            await ctx.send("You don't have permission to do that.")
 
     @commands.command(name="blacklist", aliases=["blacklistsong", "blacklistadd"])
     async def blacklist_command(self, ctx, *, song_uri: str):
@@ -212,32 +246,36 @@ class Bot(commands.Bot):
     #             return
 
     async def song_request(self, ctx, song, song_uri, album: bool):
-        jscon = self.read_json("blacklist")
+        blacklisted_users = self.read_json("blacklist_user")["users"]
+        if ctx.author.name in blacklisted_users:
+            await ctx.send("You are blacklisted from requesting songs.")
+        else:
+            jscon = self.read_json("blacklist")
 
-        if song_uri is None:
-            data = sp.search(song, limit=1, type="track", market="US")
-            song_uri = data["tracks"]["items"][0]["uri"]
+            if song_uri is None:
+                data = sp.search(song, limit=1, type="track", market="US")
+                song_uri = data["tracks"]["items"][0]["uri"]
 
-        song_id = song_uri.replace("spotify:track:", "")
+            song_id = song_uri.replace("spotify:track:", "")
 
-        if not album:
-            data = sp.track(song_id)
-            song_name = data["name"]
-            song_artists = data["artists"]
-            song_artists_names = [artist["name"] for artist in song_artists]
-            duration = data["duration_ms"] / 60000
+            if not album:
+                data = sp.track(song_id)
+                song_name = data["name"]
+                song_artists = data["artists"]
+                song_artists_names = [artist["name"] for artist in song_artists]
+                duration = data["duration_ms"] / 60000
 
-        if song_uri != "not found":
-            if song_uri in jscon["blacklist"]:
-                await ctx.send("That song is blacklisted.")
+            if song_uri != "not found":
+                if song_uri in jscon["blacklist"]:
+                    await ctx.send("That song is blacklisted.")
 
-            elif duration > 17:
-                await ctx.send("Send a shorter song please! :)")
-            else:
-                sp.add_to_queue(song_uri)
-                await ctx.send(
-                    f"Your song ({song_name} by {', '.join(song_artists_names)}) [ {data['external_urls']['spotify']} ] has been added to {ctx.channel.name}'s queue!"
-                )
+                elif duration > 17:
+                    await ctx.send("Send a shorter song please! :)")
+                else:
+                    sp.add_to_queue(song_uri)
+                    await ctx.send(
+                        f"Your song ({song_name} by {', '.join(song_artists_names)}) [ {data['external_urls']['spotify']} ] has been added to {ctx.channel.name}'s queue!"
+                    )
 
     def read_json(self, filename):
         with open(f"{cwd}/{filename}.json", "r") as file:
