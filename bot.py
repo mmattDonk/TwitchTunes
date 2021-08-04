@@ -42,6 +42,7 @@ import dotenv
 
 cwd = Path(__file__).parents[0]
 cwd = str(cwd)
+import asyncio
 
 import json
 
@@ -100,17 +101,27 @@ class Bot(commands.Bot):
         with open(f"{filename}.json", "w") as file:
             json.dump(data, file, indent=4)
 
+    def is_owner(self, ctx):
+        return ctx.author.id == "640348450"
+
     async def event_message(self, message):
         await self.handle_commands(message)
+
+    # This is an owner only command for an inside joke in a certain channel, just ignore this :)
+    @commands.command(name="S3S")
+    async def s3s(self, ctx):
+        if self.is_owner(ctx) and ctx.channel.name == "tajj":
+            same_3_songs = ['spotify:track:7jVH8CXr0MSpGheHOjN4NA', 'spotify:track:0BRbI3ZMPXuj9yA7ChDGOW', 'spotify:track:0S8pAna5CIUy0g9XM5hBeF']
+            for song in same_3_songs:
+                sp.add_to_queue(song)
+                await asyncio.sleep(0.1)
+            await ctx.send("forsenPls same 3 songs forsenPls")
 
     @commands.command(name="ping", aliases=["ding"])
     async def ping_command(self, ctx):
         await ctx.send(
             f":) 🎶 TwitchTunes v{self.version} (Spotify Song Requests) is online!"
         )
-
-    def is_owner(self, ctx):
-        return ctx.author.id == "640348450"
 
     @commands.command(name="blacklistuser")
     async def blacklist_user(self, ctx, *, user: str):
