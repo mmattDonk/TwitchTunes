@@ -111,7 +111,11 @@ class Bot(commands.Bot):
     @commands.command(name="S3S")
     async def s3s(self, ctx):
         if self.is_owner(ctx) and ctx.channel.name == "tajj":
-            same_3_songs = ['spotify:track:7jVH8CXr0MSpGheHOjN4NA', 'spotify:track:0BRbI3ZMPXuj9yA7ChDGOW', 'spotify:track:0S8pAna5CIUy0g9XM5hBeF']
+            same_3_songs = [
+                "spotify:track:7jVH8CXr0MSpGheHOjN4NA",
+                "spotify:track:0BRbI3ZMPXuj9yA7ChDGOW",
+                "spotify:track:0S8pAna5CIUy0g9XM5hBeF",
+            ]
             for song in same_3_songs:
                 sp.add_to_queue(song)
                 await asyncio.sleep(0.1)
