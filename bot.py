@@ -82,7 +82,7 @@ class Bot(commands.Bot):
         )
 
         self.token = os.environ.get("SPOTIFY_AUTH")
-        self.version = "1.2.5.fix"
+        self.version = "1.2.6"
 
     async def event_ready(self):
         print("\n" * 100)
@@ -114,6 +114,7 @@ class Bot(commands.Bot):
 
     @commands.command(name="blacklistuser")
     async def blacklist_user(self, ctx, *, user: str):
+        user = user.lower()
         if ctx.author.is_mod or self.is_owner(ctx):
             file = self.read_json("blacklist_user")
             if user not in file["users"]:
@@ -127,6 +128,7 @@ class Bot(commands.Bot):
 
     @commands.command(name="unblacklistuser")
     async def unblacklist_user(self, ctx, *, user: str):
+        user = user.lower()
         if ctx.author.is_mod or self.is_owner(ctx):
             file = self.read_json("blacklist_user")
             if user in file["users"]:
@@ -261,7 +263,7 @@ class Bot(commands.Bot):
 
     async def song_request(self, ctx, song, song_uri, album: bool):
         blacklisted_users = self.read_json("blacklist_user")["users"]
-        if ctx.author.name in blacklisted_users:
+        if ctx.author.name.lower() in blacklisted_users:
             await ctx.send("You are blacklisted from requesting songs.")
         else:
             jscon = self.read_json("blacklist")
