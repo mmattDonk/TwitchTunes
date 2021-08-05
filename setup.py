@@ -96,6 +96,13 @@ with open("blacklist_user.json", "a") as blacklist_user_file:
 
 print("Finished writing to `blacklist_user.json`")
 
+print("....Writing to `authroles.json`")
+
+with open("blacklist_user.json", "a") as blacklist_user_file:
+    blacklist_user_file.write(json.dumps({"roles": []}))
+
+print("Finished writing to `authroles.json`")
+
 print("\n" * 10)
 
 input(
