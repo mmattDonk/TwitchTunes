@@ -28,6 +28,12 @@ if not os.path.exists(path_exists("blacklist_user.json")):
     )
     exit()
 
+if not os.path.exists(path_exists("authroles.json")):
+    print(
+        "Blacklisted users file not found. Exiting.\nPlease run `setup.py`\n(or make a `authroles.json` file yourself, if you know how to)\nhttps://github.com/mmattbtw/TwitchTunes/wiki/Blacklist.json"
+    )
+    exit()
+
 
 os.system("pip install -U -r requirements.txt")
 print("\n\nStarting 🎶TwitchTunes")
@@ -96,7 +102,14 @@ class Bot(commands.Bot):
         with open(f"{filename}.json", "r") as file:
             data = json.load(file)
         return data
-
+    async def checkrole(ctx):
+        with open("authroles.json","r") as authroles:
+            authr = json.load(authroles)
+            for role in ctx.author.roles:
+                if role.id in authr["roles"]:
+                    await ctx.send("You are blacklisted")
+                    return False
+         return True
     def write_json(self, data, filename):
         with open(f"{filename}.json", "w") as file:
             json.dump(data, file, indent=4)
@@ -109,6 +122,7 @@ class Bot(commands.Bot):
 
     # This is an owner only command for an inside joke in a certain channel, just ignore this :)
     @commands.command(name="S3S")
+    @commands.check(checkrole)
     async def s3s(self, ctx):
         if self.is_owner(ctx) and ctx.channel.name == "tajj":
             same_3_songs = [
@@ -120,14 +134,44 @@ class Bot(commands.Bot):
                 sp.add_to_queue(song)
                 await asyncio.sleep(0.1)
             await ctx.send("forsenPls same 3 songs forsenPls")
-
+            
+    @commands.command((name="roleadd")
+    async def add_bl_role(self,ctx,role):
+        role = role.replace("<@","")
+        role = role.replace(">","")
+        try:
+             int(role)
+        except:
+             return await ctx.send("Please enter a valid role/ role id")
+        with open("authroles.json","r") as authroles:
+            authr = json.load(authroles)
+        authr["roles"].append(role)
+        with open("authroles.json","w") as authroles:
+            json.dump(authr,authroles)
+        await ctx.send(f"Sucessfully blacklisted {role}")
+                      
+    @commands.command((name="roleremove")
+    async def remove_bl_role(self,ctx,role):
+        role = role.replace("<@","")
+        role = role.replace(">","")
+        with open("authroles.json","r") as authroles:
+            authr = json.load(authroles)
+        if role not in authr["roles"]:
+            return await ctx.send("Role not blacklisted")
+        authr["roles"].remove(role)
+        with open("authroles.json","w") as authroles:
+            json.dump(authr,authroles)
+        await ctx.send(f"Sucessfully unblacklisted {role}")
+                      
     @commands.command(name="ping", aliases=["ding"])
+    @commands.check(checkrole)
     async def ping_command(self, ctx):
         await ctx.send(
             f":) 🎶 TwitchTunes v{self.version} (Spotify Song Requests) is online!"
         )
 
     @commands.command(name="blacklistuser")
+    @commands.check(checkrole)
     async def blacklist_user(self, ctx, *, user: str):
         user = user.lower()
         if ctx.author.is_mod or self.is_owner(ctx):
@@ -142,6 +186,7 @@ class Bot(commands.Bot):
             await ctx.send("You don't have permission to do that.")
 
     @commands.command(name="unblacklistuser")
+    @commands.check(checkrole)
     async def unblacklist_user(self, ctx, *, user: str):
         user = user.lower()
         if ctx.author.is_mod or self.is_owner(ctx):
@@ -156,6 +201,7 @@ class Bot(commands.Bot):
             await ctx.send("You don't have permission to do that.")
 
     @commands.command(name="blacklist", aliases=["blacklistsong", "blacklistadd"])
+    @commands.check(checkrole)
     async def blacklist_command(self, ctx, *, song_uri: str):
         if ctx.author.is_mod or self.is_owner(ctx):
             jscon = self.read_json("blacklist")
@@ -187,6 +233,7 @@ class Bot(commands.Bot):
     @commands.command(
         name="unblacklist", aliases=["unblacklistsong", "blacklistremove"]
     )
+    @commands.check(checkrole)
     async def unblacklist_command(self, ctx, *, song_uri: str):
         if ctx.author.is_mod or self.is_owner(ctx):
             jscon = self.read_json("blacklist")
@@ -209,6 +256,7 @@ class Bot(commands.Bot):
             await ctx.send("You are not authorized to use this command.")
 
     @commands.command(name="np", aliases=["nowplaying", "song"])
+    @commands.check(checkrole)
     async def np_command(self, ctx):
         data = sp.currently_playing()
         song_artists = data["item"]["artists"]
@@ -227,6 +275,7 @@ class Bot(commands.Bot):
         )
 
     @commands.command(name="songrequest", aliases=["sr", "addsong"])
+    @commands.check(checkrole)
     async def songrequest_command(self, ctx, *, song: str):
         song_uri = None
 
