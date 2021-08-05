@@ -50,7 +50,11 @@
 
     * `!np` - Shows the current song
 
-    * `!songrequest {song}` - Requests a song to be played 
+    * `!songrequest {song}` - Requests a song to be played
+     
+    * `!roleadd {role/role id}` - Adds a role to blacklist users from the bot
+
+    * `!roleremove {role/role id}` - Removes a role to blacklist users from the bot
 
 ### `🙌` Code Contributors
 
