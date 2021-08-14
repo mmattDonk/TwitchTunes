@@ -9,4 +9,4 @@ python_dotenv == 0.19.0
 # C:\Users\notmm\TwitchTunes\bot.py: 3,4
 twitchio == 2.0.5
 
-spotipy == 2.18.0
+spotipy == 2.19.0
