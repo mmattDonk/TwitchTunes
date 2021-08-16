@@ -12,7 +12,7 @@
 2. A Twitch bot account
 3. A Spotify account (I think Premium is required, not sure.)
 
-### `✨` Usefull things to have before running `setup.py`
+### `✨` Useful things to have before running `setup.py`
 1. [Bot Token](https://twitchapps.com/tmi/)
 2. [Twitch Application](https://dev.twitch.tv/console/apps/create)
     * Create a `Chat Bot` application
