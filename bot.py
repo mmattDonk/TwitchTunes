@@ -9,21 +9,21 @@ def path_exists(filename):
 
 
 if not os.path.exists(path_exists("config.json")):
-    print("Config file not found. Exiting.\nPlease run `setup.py`")
+    input("Config file not found. Exiting.\nPlease run `setup.py`")
     exit()
 
 if not os.path.exists(path_exists(".env")):
-    print("Environment Variables not found. Exiting.\nPlease run `setup.py`")
+    input("Environment Variables not found. Exiting.\nPlease run `setup.py`")
     exit()
 
 if not os.path.exists(path_exists("blacklist.json")):
-    print(
+    input(
         "Blacklist file not found. Exiting.\nPlease run `setup.py`\n(or make a `blacklist.json` file yourself, if you know how to)\nhttps://github.com/mmattbtw/TwitchTunes/wiki/Blacklist.json"
     )
     exit()
 
 if not os.path.exists(path_exists("blacklist_user.json")):
-    print(
+    input(
         "Blacklisted users file not found. Exiting.\nPlease run `setup.py`\n(or make a `blacklist_user.json` file yourself, if you know how to)\nhttps://github.com/mmattbtw/TwitchTunes/wiki/Blacklist.json"
     )
     exit()
