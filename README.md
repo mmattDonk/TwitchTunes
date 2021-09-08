@@ -21,7 +21,7 @@
     * Set the Website and Redirect URLs to `http://localhost:8080`
 
 ### `⚙` Setup
-1. Run the `setup.py` script.
+1. Run the `setup.py` script. **<!! RUN `setup.py` ONCE, IF YOU NEED ADDITIONAL FILES, CHECK THE [WIKI](https://github.com/mmattDonk/TwitchTunes/wiki) !!>**
 2. Follow all the instructions!
 
 ### `❗` How to request songs
