@@ -5,6 +5,7 @@ import os
 
 import json
 
+
 def path_exists(filename):
     return os.path.join(".", f"{filename}")
 
