@@ -5,6 +5,9 @@ import os
 
 import json
 
+def path_exists(filename):
+    return os.path.join(".", f"{filename}")
+
 
 input(
     "Let's install the Python dependencies\n(This will also happen every time you open bot.py, to make sure they are up to date)\nPress `ENTER` to continue. "
@@ -58,41 +61,76 @@ print("\n--------------------------")
 print("\n" * 10)
 
 print("....Writing to `.env`")
-with open(".env", "a") as env_file:
-    env_file.write(
-        f"TOKEN={token}\n"
-        + "# Twitch IRC token\n"
-        + f"client_id={client_id}\n"
-        + "# Twitch Client ID from dev.twitch.tv\n"
-        + f"\nspotify_client_id={spotify_client_id}\n"
-        + "# Get this from the Spotify console https://developer.spotify.com/dashboard/applications\n"
-        + f"spotify_secret={spotify_secret}\n"
-        + "# Get this from the Spotify console https://developer.spotify.com/dashboard/applications\n"
-        + "spotify_redirect_uri=http://localhost:8080\n"
-        + "# Set your 'redirect_uri' and 'website' on your Spotify application to 'http://localhost:8080' (Don't change the spotify_redirect_uri in .env)"
-    )
+
+if not os.path.exists(path_exists(".env")):
+    with open(".env", "a") as env_file:
+        env_file.write(
+            f"TOKEN={token}\n"
+            + "# Twitch IRC token\n"
+            + f"client_id={client_id}\n"
+            + "# Twitch Client ID from dev.twitch.tv\n"
+            + f"\nspotify_client_id={spotify_client_id}\n"
+            + "# Get this from the Spotify console https://developer.spotify.com/dashboard/applications\n"
+            + f"spotify_secret={spotify_secret}\n"
+            + "# Get this from the Spotify console https://developer.spotify.com/dashboard/applications\n"
+            + "spotify_redirect_uri=http://localhost:8080\n"
+            + "# Set your 'redirect_uri' and 'website' on your Spotify application to 'http://localhost:8080' (Don't change the spotify_redirect_uri in .env)"
+        )
+
+elif os.path.exists(path_exists(".env")):
+    with open(".env", "w") as env_file:
+        env_file.write(
+            f"TOKEN={token}\n"
+            + "# Twitch IRC token\n"
+            + f"client_id={client_id}\n"
+            + "# Twitch Client ID from dev.twitch.tv\n"
+            + f"\nspotify_client_id={spotify_client_id}\n"
+            + "# Get this from the Spotify console https://developer.spotify.com/dashboard/applications\n"
+            + f"spotify_secret={spotify_secret}\n"
+            + "# Get this from the Spotify console https://developer.spotify.com/dashboard/applications\n"
+            + "spotify_redirect_uri=http://localhost:8080\n"
+            + "# Set your 'redirect_uri' and 'website' on your Spotify application to 'http://localhost:8080' (Don't change the spotify_redirect_uri in .env)"
+        )
 
 print("Finished writing to `.env`")
 
 print("....Writing to `config.json`")
-with open("config.json", "a") as config_file:
-    config_file.write(
-        json.dumps({"nickname": bot_name, "prefix": prefix, "channels": [channel]})
-    )
+
+if not os.path.exists(path_exists("config.json")):
+    with open("config.json", "a") as config_file:
+        config_file.write(
+            json.dumps({"nickname": bot_name, "prefix": prefix, "channels": [channel]})
+        )
+
+elif os.path.exists(path_exists("config.json")):
+    with open("config.json", "w") as config_file:
+        config_file.write(
+            json.dumps({"nickname": bot_name, "prefix": prefix, "channels": [channel]})
+        )
 
 print("Finished writing to `config.json`")
 
 print("....Writing to `blacklist.json`")
 
-with open("blacklist.json", "a") as blacklist_file:
-    blacklist_file.write(json.dumps({"blacklist": []}))
+if not os.path.exists(path_exists("blacklist.json")):
+    with open("blacklist.json", "a") as blacklist_file:
+        blacklist_file.write(json.dumps({"blacklist": []}))
+
+elif os.path.exists(path_exists("blacklist.json")):
+    with open("blacklist.json", "w") as blacklist_file:
+        blacklist_file.write(json.dumps({"blacklist": []}))
 
 print("Finished writing to `blacklist.json`")
 
 print("....Writing to `blacklist_user.json`")
 
-with open("blacklist_user.json", "a") as blacklist_user_file:
-    blacklist_user_file.write(json.dumps({"users": []}))
+if not os.path.exists(path_exists("blacklist_user.json")):
+    with open("blacklist_user.json", "a") as blacklist_user_file:
+        blacklist_user_file.write(json.dumps({"users": []}))
+
+elif os.path.exists(path_exists("blacklist_user.json")):
+    with open("blacklist_user.json", "w") as blacklist_user_file:
+        blacklist_user_file.write(json.dumps({"users": []}))
 
 print("Finished writing to `blacklist_user.json`")
 
