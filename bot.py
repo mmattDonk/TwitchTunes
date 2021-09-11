@@ -139,7 +139,7 @@ class Bot(commands.Bot):
         )
 
         self.token = os.environ.get("SPOTIFY_AUTH")
-        self.version = "1.2.6"
+        self.version = "1.2.6.fix"
 
     async def event_ready(self):
         print("\n" * 100)
@@ -164,7 +164,7 @@ class Bot(commands.Bot):
         await self.handle_commands(message)
 
     # This is an owner only command for an inside joke in a certain channel, just ignore this :)
-    @commands.command(name="S3S")
+    @commands.command(name="s3s")
     async def s3s(self, ctx):
         if self.is_owner(ctx) and ctx.channel.name == "tajj":
             same_3_songs = [
