@@ -11,6 +11,7 @@
     - [Ubuntu Guide](https://linuxize.com/post/how-to-install-python-3-9-on-ubuntu-20-04/)
 2. A Twitch bot account
 3. A Spotify account (I think Premium is required, not sure.)
+4. Git (https://git-scm.com/downloads)
 
 ### `✨` Useful things to have before running `setup.py`
 1. [Bot Token](https://twitchapps.com/tmi/)

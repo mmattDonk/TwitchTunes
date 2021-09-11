@@ -5,6 +5,9 @@ from twitchio.ext.commands.errors import MissingRequiredArgument
 import json
 
 
+os.system("git pull origin master")
+
+
 def path_exists(filename):
     return os.path.join(".", f"{filename}")
 
@@ -139,7 +142,7 @@ class Bot(commands.Bot):
         )
 
         self.token = os.environ.get("SPOTIFY_AUTH")
-        self.version = "1.2.6"
+        self.version = "1.2.8"
 
     async def event_ready(self):
         print("\n" * 100)
