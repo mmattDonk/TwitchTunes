@@ -139,7 +139,7 @@ class Bot(commands.Bot):
         )
 
         self.token = os.environ.get("SPOTIFY_AUTH")
-        self.version = "1.2.6.fix"
+        self.version = "1.2.7"
 
     async def event_ready(self):
         print("\n" * 100)
