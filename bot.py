@@ -1,11 +1,12 @@
+os.system("git pull origin master")
+os.system("pip install -U -r requirements.txt")
+
+
 import os
 from typing import Optional
 
 from twitchio.ext.commands.errors import MissingRequiredArgument
 import json
-
-
-os.system("git pull origin master")
 
 
 def path_exists(filename):
@@ -88,7 +89,6 @@ if not os.path.exists(path_exists("blacklist_user.json")):
         blacklist_user_file.write(json.dumps({"users": []}))
 
 
-os.system("pip install -U -r requirements.txt")
 print("\n\nStarting 🎶TwitchTunes")
 
 from aiohttp import request
