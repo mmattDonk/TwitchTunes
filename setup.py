@@ -59,6 +59,12 @@ channel = input(
     "Type your Channel's name, then press `ENTER`. (You can change this later) "
 )
 print("\n--------------------------")
+print("\nNineth, what's your Owner ID? (example: 1234,2345,1234)")
+owner_id = input(
+    "Type your Owner ID, then press `ENTER`. (You can change this later) "
+)
+print("\n--------------------------")
+
 print("\n" * 10)
 
 print("....Writing to `.env`")
@@ -100,13 +106,13 @@ print("....Writing to `config.json`")
 if not os.path.exists(path_exists("config.json")):
     with open("config.json", "a") as config_file:
         config_file.write(
-            json.dumps({"nickname": bot_name, "prefix": prefix, "channels": [channel]})
+            json.dumps({"nickname": bot_name, "prefix": prefix, "channels": [channel], "owner_id": [ i for i in owner_id.split(",") ]})
         )
 
 elif os.path.exists(path_exists("config.json")):
     with open("config.json", "w") as config_file:
         config_file.write(
-            json.dumps({"nickname": bot_name, "prefix": prefix, "channels": [channel]})
+            json.dumps({"nickname": bot_name, "prefix": prefix, "channels": [channel], "owner_id": [ i for i in owner_id.split(",") ]})
         )
 
 print("Finished writing to `config.json`")

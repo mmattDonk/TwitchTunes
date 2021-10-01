@@ -32,7 +32,7 @@ if not os.path.exists(path_exists("config.json")):
 
     with open("config.json", "a") as config_file:
         config_file.write(
-            json.dumps({"nickname": bot_name, "prefix": prefix, "channels": [channel]})
+            json.dumps({"nickname": bot_name, "prefix": prefix, "channels": [channel], "owner_id": []})
         )
 
 if not os.path.exists(path_exists(".env")):
@@ -162,7 +162,7 @@ class Bot(commands.Bot):
             json.dump(data, file, indent=4)
 
     def is_owner(self, ctx):
-        return ctx.author.id == "640348450"
+        return True if ctx.author.id in config["owner_id"] else False
 
     async def event_message(self, message):
         await self.handle_commands(message)
