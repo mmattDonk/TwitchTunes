@@ -1,4 +1,4 @@
-## `🎶` TwitchTunes
+## `🎶` TwitchTunes [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/mmattDonk/TwitchTunes/master.svg)](https://results.pre-commit.ci/latest/github/mmattDonk/TwitchTunes/master)
 #### A Python Twitch bot that lets viewers add Spotify songs to your Spotify queue. 
 
 
