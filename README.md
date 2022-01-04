@@ -10,7 +10,7 @@
         * Brew: `brew install python3` and `brew install pip3`
     - [Ubuntu Guide](https://linuxize.com/post/how-to-install-python-3-9-on-ubuntu-20-04/)
 2. A Twitch bot account
-3. A Spotify account (I think Premium is required, not sure.)
+3. A Spotify account (Spotify Premium is required, this is an API limitation.)
 4. Git (https://git-scm.com/downloads)
 
 ### `✨` Useful things to have before running `setup.py`
