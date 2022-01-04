@@ -1,9 +1,5 @@
 import os
 
-os.system("git pull origin master")
-os.system("pip install -U -r requirements.txt")
-
-
 from typing import Optional
 
 from twitchio.ext.commands.errors import MissingRequiredArgument
