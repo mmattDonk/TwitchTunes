@@ -1,9 +1,24 @@
+import json
+import logging
 import os
-
+import sys
 from typing import Optional
 
+from rich.logging import RichHandler
 from twitchio.ext.commands.errors import MissingRequiredArgument
-import json
+
+log_level = logging.DEBUG if "dev".lower() in sys.argv else logging.INFO
+
+
+log = logging.getLogger()
+
+
+logging.basicConfig(
+    level=log_level,
+    format="%(name)s - %(message)s",
+    datefmt="%X",
+    handlers=[RichHandler()],
+)
 
 
 def path_exists(filename):
@@ -86,22 +101,18 @@ if not os.path.exists(path_exists("blacklist_user.json")):
         blacklist_user_file.write(json.dumps({"users": []}))
 
 
-print("\n\nStarting 🎶TwitchTunes")
+log.info("\n\nStarting 🎶TwitchTunes")
 
-from aiohttp import request
 from pathlib import Path
 
-from twitchio.ext import commands
-from twitchio.ext import pubsub
-
 import dotenv
+from aiohttp import request
+from twitchio.ext import commands, pubsub
 
 cwd = Path(__file__).parents[0]
 cwd = str(cwd)
 import asyncio
-
 import json
-
 import re
 
 import spotipy
@@ -142,9 +153,9 @@ class Bot(commands.Bot):
         self.version = "1.2.8"
 
     async def event_ready(self):
-        print("\n" * 100)
-        print(f"TwitchTunes ({self.version}) Ready, logged in as: {self.nick}")
-        print(
+        log.info("\n" * 100)
+        log.info(f"TwitchTunes ({self.version}) Ready, logged in as: {self.nick}")
+        log.info(
             "Ignore the 'AttributeError: 'NoneType' object has no attribute '_ws'' error, this is an issue with the library."
         )
 
