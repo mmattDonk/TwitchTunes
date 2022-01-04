@@ -1,5 +1,5 @@
 ## `🎶` TwitchTunes
-#### A Python Twitch bot that lets viewers add Spotify songs to your Spotify queue. 
+#### A Python Twitch bot that lets viewers add Spotify songs to your Spotify queue.
 
 
 ## `💻` Prerequisites
@@ -31,7 +31,7 @@
 
 ### `💎` Other Commands:
  - Variables:
-    
+
     * `{user}` - Twitch Username
 
     * `{song}` - Can be a song name, a Spotify URI, or a Spotify URL (for the blacklist commands, it can only be a URI or URL)
@@ -50,7 +50,7 @@
 
     * `!np` - Shows the current song
 
-    * `!songrequest {song}` - Requests a song to be played 
+    * `!songrequest {song}` - Requests a song to be played
 
 ### `🙌` Code Contributors
 
