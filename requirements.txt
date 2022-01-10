@@ -7,7 +7,7 @@ aiohttp == 3.7.4.post0
 python_dotenv == 0.19.2
 
 # C:\Users\notmm\twitchtunes\bot.py: 6
-rich == 10.16.2
+rich == 11.0.0
 
 # C:\Users\notmm\twitchtunes\bot.py: 116,117
 spotipy == 2.19.0
