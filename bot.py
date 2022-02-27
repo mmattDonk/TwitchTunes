@@ -246,7 +246,7 @@ class Bot(commands.Bot):
                 await ctx.send(f"Added {track_name} to blacklist.")
 
             else:
-                await ctx.send(f"Song is already blacklisted.")
+                await ctx.send("Song is already blacklisted.")
 
         else:
             await ctx.send("You are not authorized to use this command.")
@@ -268,10 +268,10 @@ class Bot(commands.Bot):
             if song_uri in jscon["blacklist"]:
                 jscon["blacklist"].remove(song_uri)
                 self.write_json(jscon, "blacklist")
-                await ctx.send(f"Removed that song from the blacklist.")
+                await ctx.send("Removed that song from the blacklist.")
 
             else:
-                await ctx.send(f"Song is not blacklisted.")
+                await ctx.send("Song is not blacklisted.")
         else:
             await ctx.send("You are not authorized to use this command.")
 
