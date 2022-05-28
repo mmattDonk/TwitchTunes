@@ -51,3 +51,5 @@
     * `!np` - Shows the current song
 
     * `!songrequest {song}` - Requests a song to be played
+
+    * `!lastsong` - Shows the last 10 songs that were played! (we still can't get the Spotify queue from the API https://community.spotify.com/t5/Closed-Ideas/Developer-Web-API-playback-queue-route/idc-p/5387376#M261127 i hate spotify web api...)

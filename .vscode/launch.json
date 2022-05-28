@@ -9,6 +9,7 @@
             "type": "python",
             "request": "launch",
             "program": "bot.py",
+            // "args": ["dev"],
             "console": "integratedTerminal"
         }
     ]

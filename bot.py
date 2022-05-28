@@ -134,6 +134,7 @@ sp = spotipy.Spotify(
             "user-modify-playback-state",
             "user-read-currently-playing",
             "user-read-playback-state",
+            "user-read-recently-played",
         ],
     )
 )
@@ -150,14 +151,11 @@ class Bot(commands.Bot):
         )
 
         self.token = os.environ.get("SPOTIFY_AUTH")
-        self.version = "1.2.8"
+        self.version = "1.3.0"
 
     async def event_ready(self):
         log.info("\n" * 100)
         log.info(f"TwitchTunes ({self.version}) Ready, logged in as: {self.nick}")
-        log.info(
-            "Ignore the 'AttributeError: 'NoneType' object has no attribute '_ws'' error, this is an issue with the library."
-        )
 
     def read_json(self, filename):
         with open(f"{filename}.json", "r") as file:
@@ -170,9 +168,6 @@ class Bot(commands.Bot):
 
     def is_owner(self, ctx):
         return ctx.author.id == "640348450"
-
-    async def event_message(self, message):
-        await self.handle_commands(message)
 
     # This is an owner only command for an inside joke in a certain channel, just ignore this :)
     @commands.command(name="s3s")
@@ -293,6 +288,26 @@ class Bot(commands.Bot):
             f"🎶Now Playing - {data['item']['name']} by {', '.join(song_artists_names)} | Link: {data['item']['external_urls']['spotify']} | {time_through} - {time_total}"
         )
 
+    @commands.command(
+        name="lastsong", aliases=["previoussongs", "last", "previousplayed"]
+    )
+    async def queue_command(self, ctx):
+        queue = sp.current_user_recently_played(limit=10)
+        songs = []
+
+        for song in queue["items"]:
+            # if the song artists include more than one artist: add all artist names to an artist list variable
+            if len(song["track"]["artists"]) > 1:
+                artists = [artist["name"] for artist in song["track"]["artists"]]
+                song_artists = ", ".join(artists)
+            # if the song artists only include one artist: add the artist name to the artist list variable
+            else:
+                song_artists = song["track"]["artists"][0]["name"]
+
+            songs.append(song["track"]["name"] + " - " + song_artists)
+
+        await ctx.send("Recently Played: " + " | ".join(songs))
+
     @commands.command(name="songrequest", aliases=["sr", "addsong"])
     async def songrequest_command(self, ctx, *, song: str):
         song_uri = None
@@ -328,6 +343,11 @@ class Bot(commands.Bot):
     #     else:
     #         await ctx.send(f"🎶You don't have permission to do that! (Album queue is Sub Only!)")
 
+    """
+        DO NOT USE THE API REQUEST IT WONT WORK.
+        the logic should still work iwth using the spotipy library, so thats why I'm keeping it, but don't do an API request
+        - like this.
+    """
     # async def album_request(self, ctx, song):
     #     song = song.replace("spotify:album:", "")
     #     ALBUM_URL = f"https://api.spotify.com/v1/albums/{song}?market=US"

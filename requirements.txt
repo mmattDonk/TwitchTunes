@@ -4,13 +4,13 @@
 aiohttp == 3.7.4.post0
 
 # C:\Users\notmm\twitchtunes\bot.py: 106
-python_dotenv == 0.19.2
+python_dotenv == 0.20.0
 
 # C:\Users\notmm\twitchtunes\bot.py: 6
-rich == 11.2.0
+rich == 12.4.4
 
 # C:\Users\notmm\twitchtunes\bot.py: 116,117
 spotipy == 2.19.0
 
 # C:\Users\notmm\twitchtunes\bot.py: 108
-twitchio == 2.1.5
+twitchio == 2.2.0

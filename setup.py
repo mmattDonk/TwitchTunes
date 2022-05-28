@@ -10,9 +10,7 @@ def path_exists(filename):
     return os.path.join(".", f"{filename}")
 
 
-input(
-    "Let's install the Python dependencies\n(This will also happen every time you open bot.py, to make sure they are up to date)\nPress `ENTER` to continue. "
-)
+input("Let's install the Python dependencies\nPress `ENTER` to continue. ")
 os.system("pip install -U -r requirements.txt")
 
 print("\n⚠⚠⚠⚠⚠ WARNING: DO NOT SHOW THE FOLLOWING ON STREAM. ⚠⚠⚠⚠⚠" * 10)
