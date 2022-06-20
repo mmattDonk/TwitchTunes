@@ -10,7 +10,7 @@ python_dotenv == 0.20.0
 rich == 12.4.4
 
 # C:\Users\notmm\twitchtunes\bot.py: 116,117
-spotipy == 2.19.0
+spotipy == 2.20.0
 
 # C:\Users\notmm\twitchtunes\bot.py: 108
 twitchio == 2.3.0
