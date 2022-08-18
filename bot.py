@@ -2,10 +2,12 @@ import json
 import logging
 import os
 import sys
-from typing import Optional
 
 from rich.logging import RichHandler
-from twitchio.ext.commands.errors import MissingRequiredArgument
+from twitchAPI.oauth import UserAuthenticator
+from twitchAPI.pubsub import PubSub
+from twitchAPI.twitch import Twitch
+from twitchAPI.types import AuthScope
 
 log_level = logging.DEBUG if "dev".lower() in sys.argv else logging.INFO
 
@@ -27,15 +29,15 @@ def path_exists(filename):
 
 if not os.path.exists(path_exists("config.json")):
     print("\n--------------------------")
-    print("\nSixth, what's your Twitch Bot's name?")
+    print("\nwhat's your Twitch Bot's name?")
     bot_name = input(
         "Type your Bot's name, then press `ENTER`. (You can change this later) "
     )
     print("\n--------------------------")
-    print("\nSeventh, what will your prefix be? (example: !, ?, $)")
+    print("\nwhat will your prefix be? (example: !, ?, $)")
     prefix = input("Type your prefix, then press `ENTER`. (You can change this later) ")
     print("\n--------------------------")
-    print("\nEighth, what's your Twitch Channel's name?")
+    print("\nwhat's your Twitch Channel's name?")
     channel = input(
         "Type your Channel's name, then press `ENTER`. (You can change this later) "
     )
@@ -53,27 +55,36 @@ if not os.path.exists(path_exists(".env")):
     print("\n" * 100)
     print("Cool, now let's get to the boring stuff...")
     print("\n--------------------------")
-    print("\nFirst, let's set up the bot's token")
+    print("\nlet's set up the bot's token")
     token = input(
         "You can get this token from a site like https://twitchapps.com/tmi/.\nJust copy and paste the OAuth token into here.\nType token, then press `ENTER`. (You can change this later) "
     )
     print("\n--------------------------")
-    print("\nSecond, let's setup the Twitch Client ID")
+    print("\nlet's setup the Twitch Client ID")
     client_id = input(
-        "You can get this by going to https://dev.twitch.tv/console/apps/create, signing in, creating a 'Chat Bot' application (the OAuth redirect URLs can just be 'http://localhost')\nNow just copy and paste the Client ID into here.\nType the Client ID, then press `ENTER`. (You can change this later) "
+        "You can get this by going to https://dev.twitch.tv/console/apps/create, signing in, creating a 'Chat Bot' application (the OAuth redirect URLs NEED to be 'http://localhost:17563/' and 'http://localhost:17563')\nNow just copy and paste the Client ID into here.\nType the Client ID, then press `ENTER`. (You can change this later) "
     )
     print("\n--------------------------")
-    print("\nThird, lets setup the Spotify Client ID")
+    print("\nlet's setup the Twitch Client Secret")
+    client_secret = input(
+        'You can get this by scrolling down on your application, and clicking the "New Secret" button.\nNow just copy and paste the Client Secret into here.\nType the Client Secret, then press `ENTER`. (You can change this later) '
+    )
+    print("\n--------------------------")
+    channel_points_reward = input(
+        "If you are going to use TwitchTunes with channel points, then what is your Channel Point reward name?\nType the Channel Point reward name, then press `ENTER`. (You can change this later) "
+    )
+    print("\n--------------------------")
+    print("\nlets setup the Spotify Client ID")
     spotify_client_id = input(
         "You can get this by going to https://developer.spotify.com/dashboard/applications, signing in, then creating an application.\nJust paste in the Client ID into here now.\nType Spotify's Client ID, then press `ENTER`. (You can change this later)"
     )
     print("\n--------------------------")
-    print("\nFourth, let's setup the Spotify Client Secret")
+    print("\nlet's setup the Spotify Client Secret")
     spotify_secret = input(
         "You can get this by going to that application page, then clicking the 'SHOW CLIENT SECRET' button.\nNow just paste the Client Secret here.\nType Spotify Client Secret, then press `ENTER`. (You can change this later) "
     )
     print("\n--------------------------")
-    print("\nFifth, let's setup the Spotify Website/Redirect URI")
+    print("\nlet's setup the Spotify Website/Redirect URI")
     input(
         "All you have to do, is hit the settings button, then in BOTH the Website field, AND the Redirect URIs field, but 'http://localhost:8080'\nPress `ENTER` once you have completed this step."
     )
@@ -84,6 +95,10 @@ if not os.path.exists(path_exists(".env")):
             + "# Twitch IRC token\n"
             + f"client_id={client_id}\n"
             + "# Twitch Client ID from dev.twitch.tv\n"
+            + f"client_secret={client_secret}\n"
+            + "# Twitch Client Secret from dev.twitch.tv\n"
+            + f"channel_points_reward={channel_points_reward}\n"
+            + "# Channel Point reward name\n"
             + f"\nspotify_client_id={spotify_client_id}\n"
             + "# Get this from the Spotify console https://developer.spotify.com/dashboard/applications\n"
             + f"spotify_secret={spotify_secret}\n"
@@ -106,8 +121,7 @@ log.info("\n\nStarting 🎶TwitchTunes")
 from pathlib import Path
 
 import dotenv
-from aiohttp import request
-from twitchio.ext import commands, pubsub
+from twitchio.ext import commands
 
 cwd = Path(__file__).parents[0]
 cwd = str(cwd)
@@ -140,6 +154,17 @@ sp = spotipy.Spotify(
 )
 
 
+def read_json(filename):
+    with open(f"{filename}.json", "r") as file:
+        data = json.load(file)
+    return data
+
+
+def write_json(data, filename):
+    with open(f"{filename}.json", "w") as file:
+        json.dump(data, file, indent=4)
+
+
 class Bot(commands.Bot):
     def __init__(self):
         super().__init__(
@@ -151,20 +176,11 @@ class Bot(commands.Bot):
         )
 
         self.token = os.environ.get("SPOTIFY_AUTH")
-        self.version = "1.3.0"
+        self.version = "1.4.0"
 
     async def event_ready(self):
         log.info("\n" * 100)
         log.info(f"TwitchTunes ({self.version}) Ready, logged in as: {self.nick}")
-
-    def read_json(self, filename):
-        with open(f"{filename}.json", "r") as file:
-            data = json.load(file)
-        return data
-
-    def write_json(self, data, filename):
-        with open(f"{filename}.json", "w") as file:
-            json.dump(data, file, indent=4)
 
     def is_owner(self, ctx):
         return ctx.author.id == "640348450"
@@ -193,10 +209,10 @@ class Bot(commands.Bot):
     async def blacklist_user(self, ctx, *, user: str):
         user = user.lower()
         if ctx.author.is_mod or self.is_owner(ctx):
-            file = self.read_json("blacklist_user")
+            file = read_json("blacklist_user")
             if user not in file["users"]:
                 file["users"].append(user)
-                self.write_json(file, "blacklist_user")
+                write_json(file, "blacklist_user")
                 await ctx.send(f"{user} added to blacklist")
             else:
                 await ctx.send(f"{user} is already blacklisted")
@@ -207,10 +223,10 @@ class Bot(commands.Bot):
     async def unblacklist_user(self, ctx, *, user: str):
         user = user.lower()
         if ctx.author.is_mod or self.is_owner(ctx):
-            file = self.read_json("blacklist_user")
+            file = read_json("blacklist_user")
             if user in file["users"]:
                 file["users"].remove(user)
-                self.write_json(file, "blacklist_user")
+                write_json(file, "blacklist_user")
                 await ctx.send(f"{user} removed from blacklist")
             else:
                 await ctx.send(f"{user} is not blacklisted")
@@ -220,7 +236,7 @@ class Bot(commands.Bot):
     @commands.command(name="blacklist", aliases=["blacklistsong", "blacklistadd"])
     async def blacklist_command(self, ctx, *, song_uri: str):
         if ctx.author.is_mod or self.is_owner(ctx):
-            jscon = self.read_json("blacklist")
+            jscon = read_json("blacklist")
 
             song_uri = song_uri.replace("spotify:track:", "")
 
@@ -236,7 +252,7 @@ class Bot(commands.Bot):
 
                 jscon["blacklist"].append(song_uri)
 
-                self.write_json(jscon, "blacklist")
+                write_json(jscon, "blacklist")
 
                 await ctx.send(f"Added {track_name} to blacklist.")
 
@@ -251,7 +267,7 @@ class Bot(commands.Bot):
     )
     async def unblacklist_command(self, ctx, *, song_uri: str):
         if ctx.author.is_mod or self.is_owner(ctx):
-            jscon = self.read_json("blacklist")
+            jscon = read_json("blacklist")
 
             song_uri = song_uri.replace("spotify:track:", "")
 
@@ -262,7 +278,7 @@ class Bot(commands.Bot):
 
             if song_uri in jscon["blacklist"]:
                 jscon["blacklist"].remove(song_uri)
-                self.write_json(jscon, "blacklist")
+                write_json(jscon, "blacklist")
                 await ctx.send("Removed that song from the blacklist.")
 
             else:
@@ -318,10 +334,10 @@ class Bot(commands.Bot):
             and re.match(URL_REGEX, song)
         ):
             song_uri = song
-            await self.song_request(ctx, song_uri, song_uri, album=False)
+            await self.chat_song_request(ctx, song_uri, song_uri, album=False)
 
         else:
-            await self.song_request(ctx, song, song_uri, album=False)
+            await self.chat_song_request(ctx, song, song_uri, album=False)
 
     # @commands.command(name="skip")
     # async def skip_song_command(self, ctx):
@@ -363,12 +379,12 @@ class Bot(commands.Bot):
     #             await ctx.send(f"Album Requested! {data['name']}")
     #             return
 
-    async def song_request(self, ctx, song, song_uri, album: bool):
-        blacklisted_users = self.read_json("blacklist_user")["users"]
+    async def chat_song_request(self, ctx, song, song_uri, album: bool):
+        blacklisted_users = read_json("blacklist_user")["users"]
         if ctx.author.name.lower() in blacklisted_users:
             await ctx.send("You are blacklisted from requesting songs.")
         else:
-            jscon = self.read_json("blacklist")
+            jscon = read_json("blacklist")
 
             if song_uri is None:
                 data = sp.search(song, limit=1, type="track", market="US")
@@ -400,6 +416,67 @@ class Bot(commands.Bot):
                         f"@{ctx.author.name}, Your song ({song_name} by {', '.join(song_artists_names)}) [ {data['external_urls']['spotify']} ] has been added to the queue!"
                     )
 
+
+def song_request(data, song, song_uri, album: bool):
+    jscon = read_json("blacklist")
+    if song_uri is None:
+        data = sp.search(song, limit=1, type="track", market="US")
+        song_uri = data["tracks"]["items"][0]["uri"]
+    elif re.match(URL_REGEX, song_uri):
+        data = sp.track(song_uri)
+        song_uri = data["uri"]
+        song_uri = song_uri.replace("spotify:track:", "")
+    song_id = song_uri.replace("spotify:track:", "")
+    if not album:
+        data = sp.track(song_id)
+        duration = data["duration_ms"] / 60000
+    if song_uri != "not found":
+        if song_id in jscon["blacklist"] or duration > 17:
+            return
+        else:
+            sp.add_to_queue(song_uri)
+
+
+def callback_channel_points(uuid, data: dict) -> None:
+    if (
+        data["data"]["redemption"]["reward"]["title"].lower()
+        != os.environ.get("channel_points_reward").lower()
+    ):
+        return
+
+    log.debug(data)
+
+    song: str = data["data"]["redemption"]["user_input"]
+    ctx = None
+    blacklisted_users = read_json("blacklist_user")["users"]
+    if data["data"]["redemption"]["user"]["login"] in blacklisted_users:
+        return
+    if (
+        song.startswith("spotify:track:")
+        or not song.startswith("spotify:track:")
+        and re.match(URL_REGEX, song)
+    ):
+        song_uri = song
+        song_request(ctx, song_uri, song_uri, album=False)
+    else:
+        song_request(ctx, song, song_uri, album=False)
+
+
+if os.environ.get("channel_points_reward"):
+    channel_points_reward = os.environ.get("channel_points_reward")
+    twitch = Twitch(os.environ.get("client_id"), os.environ.get("client_secret"))
+    twitch.authenticate_app([])
+    target_scope: list = [AuthScope.CHANNEL_READ_REDEMPTIONS]
+    auth = UserAuthenticator(twitch, target_scope, force_verify=False)
+    token, refresh_token = auth.authenticate()
+    # add User authentication
+    twitch.set_user_authentication(token, target_scope, refresh_token)
+
+    user_id: str = twitch.get_users(logins=config["channels"])["data"][0]["id"]
+
+    pubsub = PubSub(twitch)
+    uuid = pubsub.listen_channel_points(user_id, callback_channel_points)
+    pubsub.start()
 
 bot = Bot()
 bot.run()
