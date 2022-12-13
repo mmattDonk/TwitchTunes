@@ -155,7 +155,7 @@ sp = spotipy.Spotify(
 
 
 def read_json(filename):
-    with open(f"{filename}.json", "r") as file:
+    with open(f"{filename}.json") as file:
         data = json.load(file)
     return data
 
