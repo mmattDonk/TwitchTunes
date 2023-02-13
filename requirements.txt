@@ -7,7 +7,7 @@ python_dotenv == 0.21.0
 rich == 12.6.0
 
 # TwitchTunes/bot.py: 7,8,9,10
-twitchAPI == 2.5.7.1
+twitchAPI == 3.8.0
 
 # TwitchTunes/bot.py: 124
 twitchio == 2.4.0
