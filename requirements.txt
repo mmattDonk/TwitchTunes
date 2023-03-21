@@ -10,7 +10,7 @@ rich == 12.6.0
 twitchAPI == 2.5.7.1
 
 # TwitchTunes/bot.py: 124
-twitchio == 2.4.0
+twitchio == 2.6.0
 
 # C:\Users\notmm\twitchtunes\bot.py: 116,117
 spotipy == 2.22.1
