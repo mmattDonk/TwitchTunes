@@ -459,7 +459,7 @@ def callback_channel_points(uuid, data: dict) -> None:
         song_uri = song
         song_request(ctx, song_uri, song_uri, album=False)
     else:
-        song_request(ctx, song, song_uri, album=False)
+        song_request(ctx, song, song_uri=None, album=False)
 
 
 if os.environ.get("channel_points_reward"):
