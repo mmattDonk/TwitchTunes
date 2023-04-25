@@ -327,17 +327,20 @@ class Bot(commands.Bot):
     @commands.command(name="songrequest", aliases=["sr", "addsong"])
     async def songrequest_command(self, ctx, *, song: str):
         song_uri = None
+        if(ctx.author.is_mod or self.is_owner(ctx)):
+            if (
+                song.startswith("spotify:track:")
+                or not song.startswith("spotify:track:")
+                and re.match(URL_REGEX, song)
+            ):
+                song_uri = song
+                await self.chat_song_request(ctx, song_uri, song_uri, album=False)
 
-        if (
-            song.startswith("spotify:track:")
-            or not song.startswith("spotify:track:")
-            and re.match(URL_REGEX, song)
-        ):
-            song_uri = song
-            await self.chat_song_request(ctx, song_uri, song_uri, album=False)
-
-        else:
-            await self.chat_song_request(ctx, song, song_uri, album=False)
+            else:
+                await self.chat_song_request(ctx, song, song_uri, album=False)
+        else: 
+            await ctx.send(f"@{ctx.author.name}, you don't have permission to do that.")
+            return
 
     # @commands.command(name="skip")
     # async def skip_song_command(self, ctx):
