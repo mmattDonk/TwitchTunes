@@ -327,7 +327,7 @@ class Bot(commands.Bot):
     @commands.command(name="songrequest", aliases=["sr", "addsong"])
     async def songrequest_command(self, ctx, *, song: str):
         song_uri = None
-        if(ctx.author.is_mod or self.is_owner(ctx)):
+        if ctx.author.is_mod or self.is_owner(ctx):
             if (
                 song.startswith("spotify:track:")
                 or not song.startswith("spotify:track:")
@@ -338,7 +338,7 @@ class Bot(commands.Bot):
 
             else:
                 await self.chat_song_request(ctx, song, song_uri, album=False)
-        else: 
+        else:
             await ctx.send(f"@{ctx.author.name}, you don't have permission to do that.")
             return
 
